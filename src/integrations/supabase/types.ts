@@ -340,6 +340,38 @@ export type Database = {
           },
         ]
       }
+      pet_advice: {
+        Row: {
+          advice_text: string
+          created_at: string | null
+          id: string
+          pet_id: string
+          user_id: string
+        }
+        Insert: {
+          advice_text: string
+          created_at?: string | null
+          id?: string
+          pet_id: string
+          user_id: string
+        }
+        Update: {
+          advice_text?: string
+          created_at?: string | null
+          id?: string
+          pet_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_advice_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pets: {
         Row: {
           breed: string | null
