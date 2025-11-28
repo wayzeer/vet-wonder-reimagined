@@ -158,15 +158,22 @@ export function PetCard({ pet, onDeleted }: { pet: Pet; onDeleted?: () => void }
 
       <Dialog open={showAdvice} onOpenChange={setShowAdvice}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              Consejos personalizados para {pet.name}
-            </DialogTitle>
-            <DialogDescription>
-              Próximos consejos disponibles en {daysUntilNext} días
-            </DialogDescription>
-          </DialogHeader>
+          <div className="flex gap-4">
+            <img 
+              src="/src/assets/pet-advice-illustration.jpg" 
+              alt="Pet advice" 
+              className="w-24 h-24 object-cover rounded-lg"
+            />
+            <DialogHeader className="flex-1">
+              <DialogTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                Consejos para {pet.name} 🐾
+              </DialogTitle>
+              <DialogDescription>
+                Próximos consejos disponibles en {daysUntilNext} días
+              </DialogDescription>
+            </DialogHeader>
+          </div>
           <div className="prose prose-sm max-w-none">
             <p className="whitespace-pre-wrap text-foreground">{advice}</p>
           </div>

@@ -32,7 +32,7 @@ export const SectionDivider = ({ variant = "wave", flip = false, className = "" 
       >
         <path
           fill="currentColor"
-          fillOpacity="0.15"
+          fillOpacity="1"
           d={paths[variant]}
         />
       </svg>
