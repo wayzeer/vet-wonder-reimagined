@@ -67,12 +67,12 @@ export const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-1 flex-shrink-0 text-primary" />
-                <span className="opacity-80">Calle Real 123, 28411 Moralzarzal, Madrid</span>
+                <span className="opacity-80">C. Capellanía, 25, Local 3, 28411 Moralzarzal, Madrid</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0 text-primary" />
-                <a href="tel:651503827" className="opacity-80 hover:text-primary transition-colors">
-                  651 50 38 27
+                <a href="tel:918574379" className="opacity-80 hover:text-primary transition-colors">
+                  918 57 43 79
                 </a>
               </li>
               <li className="flex items-center gap-2">

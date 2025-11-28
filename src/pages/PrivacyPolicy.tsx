@@ -107,9 +107,9 @@ const PrivacyPolicy = () => {
             </p>
             <div className="bg-muted p-4 rounded-lg mt-4">
               <p className="font-semibold">VetWonder</p>
-              <p className="text-muted-foreground">Calle Real 123, 28411 Moralzarzal, Madrid</p>
+              <p className="text-muted-foreground">C. Capellanía, 25, Local 3, 28411 Moralzarzal, Madrid</p>
               <p className="text-muted-foreground">Email: info@vetwonder.es</p>
-              <p className="text-muted-foreground">Teléfono: 651 50 38 27</p>
+              <p className="text-muted-foreground">Teléfono: 918 57 43 79</p>
             </div>
           </section>
 
