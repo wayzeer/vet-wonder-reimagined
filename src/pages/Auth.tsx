@@ -28,8 +28,8 @@ export default function Auth() {
 
       if (error) throw error;
       
-      toast.success("Welcome back!");
-      navigate("/");
+      toast.success("¡Bienvenido de nuevo!");
+      navigate("/dashboard");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -55,8 +55,8 @@ export default function Auth() {
 
       if (error) throw error;
       
-      toast.success("Account created! Please check your email.");
-      navigate("/");
+      toast.success("¡Cuenta creada! Por favor revisa tu correo.");
+      navigate("/dashboard");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -65,57 +65,60 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-accent/10 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <Card className="w-full max-w-md border-gray-200 shadow-xl">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <PawPrint className="h-8 w-8 text-white" />
+            <div className="bg-orange-100 p-3 rounded-lg">
+              <PawPrint className="h-8 w-8 text-orange-600" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">VetWonder</CardTitle>
-          <CardDescription>
-            Your pet's health, our priority
+          <CardTitle className="text-3xl font-bold text-gray-900">
+            Bienvenido a <span className="text-orange-600">VetWonder</span>
+          </CardTitle>
+          <CardDescription className="text-gray-600">
+            Accede para gestionar tus mascotas
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+              <TabsTrigger value="signin" className="data-[state=active]:bg-white">Iniciar sesión</TabsTrigger>
+              <TabsTrigger value="signup" className="data-[state=active]:bg-white">Registrarse</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">Correo electrónico</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="name@example.com"
+                    placeholder="tu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Contraseña</Label>
                   <Input
                     id="password"
                     type="password"
+                    placeholder="Tu contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" disabled={loading}>
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
+                      Iniciando sesión...
                     </>
                   ) : (
-                    "Sign In"
+                    "Iniciar sesión"
                   )}
                 </Button>
               </form>
@@ -124,46 +127,47 @@ export default function Auth() {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullname">Full Name</Label>
+                  <Label htmlFor="fullname">Nombre completo</Label>
                   <Input
                     id="fullname"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Juan Pérez"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email">Correo electrónico</Label>
                   <Input
                     id="signup-email"
                     type="email"
-                    placeholder="name@example.com"
+                    placeholder="tu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password">Contraseña</Label>
                   <Input
                     id="signup-password"
                     type="password"
+                    placeholder="Mínimo 6 caracteres"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" disabled={loading}>
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
+                      Creando cuenta...
                     </>
                   ) : (
-                    "Sign Up"
+                    "Registrarse"
                   )}
                 </Button>
               </form>
