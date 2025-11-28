@@ -61,7 +61,7 @@ export default function Index() {
         <div className="absolute inset-0 z-0">
           <iframe
             className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2"
-            src="https://www.youtube.com/embed/J---aiyznGQ?autoplay=1&mute=1&loop=1&playlist=J---aiyznGQ&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3"
+            src="https://www.youtube.com/embed/iucW5evsuLE?autoplay=1&mute=1&loop=1&playlist=iucW5evsuLE&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&start=60"
             title="Cute puppies video"
             allow="autoplay; encrypted-media"
             style={{ pointerEvents: 'none' }}
@@ -164,10 +164,10 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="diagonal" flip className="text-muted" />
+      <SectionDivider variant="diagonal" flip className="text-primary bg-muted/30" />
 
       {/* Contact Section with Map */}
-      <section className="py-16">
+      <section className="py-16 bg-white">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Visítanos</h2>
