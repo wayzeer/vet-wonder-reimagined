@@ -235,35 +235,6 @@ export default function Index() {
                 </div>
               </div>
             </div>
-                  <h3 className="font-semibold text-lg mb-2">Dirección</h3>
-                  <p className="text-muted-foreground">Calle Real 123<br />28411 Moralzarzal, Madrid</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                  <Phone className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Teléfono</h3>
-                  <a href="tel:651503827" className="text-muted-foreground hover:text-primary transition-colors">
-                    651 50 38 27
-                  </a>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                  <Mail className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Email</h3>
-                  <a href="mailto:info@vetwonder.es" className="text-muted-foreground hover:text-primary transition-colors">
-                    info@vetwonder.es
-                  </a>
-                </div>
-              </div>
-            </div>
 
             {/* Map */}
             <div className="animate-fade-in">
