@@ -78,7 +78,7 @@ export default function Index() {
           />
           {/* Diagonal Gradient Overlay */}
           <div 
-            className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/80 to-transparent"
+            className="absolute inset-0 bg-gradient-to-br from-background via-background/80 to-transparent"
             style={{
               WebkitMaskImage: 'linear-gradient(135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%)',
               maskImage: 'linear-gradient(135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%)',
@@ -120,7 +120,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="wave" className="text-muted/30 bg-background" />
+      <SectionDivider variant="wave" className="text-background bg-muted/30 -mt-24 relative z-20" />
 
       {/* Services Section */}
       <section className="py-16 bg-muted/30">
@@ -174,7 +174,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="diagonal" flip className="text-white bg-muted/30" />
+      <SectionDivider variant="diagonal" flip className="text-muted/30 bg-white" />
 
       {/* News Section */}
       <section className="py-16 bg-white">
@@ -187,7 +187,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="wave" flip className="text-muted/30 bg-white" />
+      <SectionDivider variant="wave" flip className="text-white bg-muted/30" />
 
       {/* Instagram Section */}
       <section className="py-16 bg-muted/30">
@@ -232,6 +232,16 @@ export default function Index() {
                   <a href="mailto:info@vetwonder.es" className="text-white/90 hover:text-white">
                     info@vetwonder.es
                   </a>
+                </div>
+              </div>
+              <div className="flex flex-col items-center text-center gap-3">
+                <Calendar className="h-6 w-6" />
+                <div>
+                  <h3 className="font-semibold mb-2">Horario</h3>
+                  <p className="text-white/90">
+                    Lunes a Viernes: 10:00 - 14:00 / 17:00 - 20:00<br />
+                    Sábados: 10:00 - 14:00
+                  </p>
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { Facebook, Instagram, Mail, MapPin, Phone, Clock } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -81,6 +81,13 @@ export const Footer = () => {
                   info@vetwonder.es
                 </a>
               </li>
+              <li className="flex items-start gap-2">
+                <Clock className="h-4 w-4 mt-1 flex-shrink-0 text-primary" />
+                <div className="opacity-80">
+                  <div>Lunes a Viernes: 10:00 - 14:00 / 17:00 - 20:00</div>
+                  <div>Sábados: 10:00 - 14:00</div>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
@@ -90,7 +97,7 @@ export const Footer = () => {
           <p className="mt-2">
             Web por{" "}
             <a 
-              href="https://automomio.es" 
+              href="https://autonomio.es" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-primary hover:underline"
