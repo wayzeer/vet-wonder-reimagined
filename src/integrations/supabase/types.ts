@@ -25,6 +25,7 @@ export type Database = {
           id: string
           notes: string | null
           pet_id: string
+          reminder_sent: string | null
           status: Database["public"]["Enums"]["appointment_status"] | null
           updated_at: string | null
           veterinarian_id: string | null
@@ -39,6 +40,7 @@ export type Database = {
           id?: string
           notes?: string | null
           pet_id: string
+          reminder_sent?: string | null
           status?: Database["public"]["Enums"]["appointment_status"] | null
           updated_at?: string | null
           veterinarian_id?: string | null
@@ -53,6 +55,7 @@ export type Database = {
           id?: string
           notes?: string | null
           pet_id?: string
+          reminder_sent?: string | null
           status?: Database["public"]["Enums"]["appointment_status"] | null
           updated_at?: string | null
           veterinarian_id?: string | null
@@ -280,6 +283,56 @@ export type Database = {
           },
         ]
       }
+      news: {
+        Row: {
+          category: string | null
+          clinic_id: string | null
+          content: string
+          created_at: string | null
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          published: boolean | null
+          published_at: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          clinic_id?: string | null
+          content: string
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          clinic_id?: string | null
+          content?: string
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -487,6 +540,7 @@ export type Database = {
           next_due_date: string | null
           notes: string | null
           pet_id: string
+          reminder_sent: string | null
           vaccine_date: string
           vaccine_name: string
           veterinarian_id: string | null
@@ -498,6 +552,7 @@ export type Database = {
           next_due_date?: string | null
           notes?: string | null
           pet_id: string
+          reminder_sent?: string | null
           vaccine_date: string
           vaccine_name: string
           veterinarian_id?: string | null
@@ -509,6 +564,7 @@ export type Database = {
           next_due_date?: string | null
           notes?: string | null
           pet_id?: string
+          reminder_sent?: string | null
           vaccine_date?: string
           vaccine_name?: string
           veterinarian_id?: string | null
