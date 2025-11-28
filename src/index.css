@@ -2,6 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 215 25% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+    --primary: 200 95% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 15% 92%;
+    --secondary-foreground: 215 25% 15%;
+    --muted: 200 15% 95%;
+    --muted-foreground: 215 15% 40%;
+    --accent: 168 75% 42%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 200 20% 88%;
+    --input: 200 20% 88%;
+    --ring: 200 95% 45%;
+    --radius: 0.5rem;
+
+    /* Custom veterinary theme colors */
+    --vet-teal: 168 75% 42%;
+    --vet-teal-light: 168 65% 88%;
+    --vet-navy: 215 35% 25%;
+    --vet-sky: 200 95% 45%;
+    --vet-warm: 35 90% 60%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(200 95% 45%), hsl(168 75% 42%));
+    --gradient-card: linear-gradient(to bottom right, hsl(200 95% 98%), hsl(168 75% 96%));
+    
+    /* Shadows */
+    --shadow-soft: 0 2px 12px -2px hsl(200 30% 60% / 0.15);
+    --shadow-card: 0 4px 20px -4px hsl(200 30% 50% / 0.12);
+    --shadow-elevated: 0 8px 32px -8px hsl(200 30% 40% / 0.18);
+  }
+
+  .dark {
+    --background: 215 30% 8%;
+    --foreground: 210 20% 92%;
+    --card: 215 25% 12%;
+    --card-foreground: 210 20% 92%;
+    --popover: 215 25% 12%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 200 95% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 25% 18%;
+    --secondary-foreground: 210 20% 92%;
+    --muted: 215 25% 16%;
+    --muted-foreground: 210 15% 60%;
+    --accent: 168 75% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 25% 22%;
+    --input: 215 25% 22%;
+    --ring: 200 95% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary to-accent text-primary-foreground;
+    @apply hover:shadow-lg transition-all duration-300;
+  }
+  
+  .card-soft {
+    @apply bg-card rounded-lg;
+    box-shadow: var(--shadow-card);
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-hero);
+  }
+  
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1;
+  }
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
