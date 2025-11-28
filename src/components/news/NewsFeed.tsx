@@ -69,11 +69,12 @@ export function NewsFeed() {
         <Card key={item.id} className="hover:shadow-lg transition-all hover:-translate-y-1 overflow-hidden flex flex-col">
           {item.image_url ? (
             <div className="h-48 overflow-hidden">
-              <img 
-                src={item.image_url} 
-                alt={item.title}
-                className="w-full h-full object-cover"
-              />
+            <img 
+              src={item.image_url} 
+              alt={item.title}
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
             </div>
           ) : (
             <div className="h-32 md:h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">

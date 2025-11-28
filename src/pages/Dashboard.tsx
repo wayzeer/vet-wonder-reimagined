@@ -5,7 +5,8 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PawPrint, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
+import logoVetWonder from "@/assets/logo-vetwonder.png";
 import { PetsList } from "@/components/pets/PetsList";
 import { AppointmentCalendar } from "@/components/appointments/AppointmentCalendar";
 import { AppointmentForm } from "@/components/appointments/AppointmentForm";
@@ -57,14 +58,12 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm sticky top-0 z-30 backdrop-blur-md bg-white/90">
         <div className="container-custom flex items-center justify-between h-20">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="bg-orange-100 p-2 rounded-lg">
-              <PawPrint className="h-6 w-6 text-orange-600" />
-            </div>
-            <span className="text-2xl font-bold text-gray-800 tracking-tight">
-              Vet<span className="text-orange-600">Wonder</span>
-            </span>
-          </div>
+          <img 
+            src={logoVetWonder} 
+            alt="VetWonder Moralzarzal" 
+            className="h-12 cursor-pointer" 
+            onClick={() => navigate("/")}
+          />
           
           <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-gray-600 hover:text-orange-600">
             <LogOut className="h-4 w-4 mr-2" />

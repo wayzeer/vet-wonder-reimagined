@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { PawPrint, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -68,11 +69,11 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md border-gray-200 shadow-xl">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-4">
-            <div className="bg-orange-100 p-3 rounded-lg">
-              <PawPrint className="h-8 w-8 text-orange-600" />
-            </div>
-          </div>
+          <img 
+            src={logoVetWonder} 
+            alt="VetWonder" 
+            className="h-16 mx-auto mb-4"
+          />
           <CardTitle className="text-3xl font-bold text-gray-900">
             Bienvenido a <span className="text-orange-600">VetWonder</span>
           </CardTitle>

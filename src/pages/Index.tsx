@@ -134,13 +134,16 @@ export default function Index() {
       <section className="relative overflow-hidden min-h-[500px] md:min-h-[600px] flex items-center">
         {/* Video Background - optimizado para móvil */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <iframe
-            className="absolute top-1/2 left-1/2 w-full h-full md:w-[150%] md:h-[150%] -translate-x-1/2 -translate-y-1/2 scale-[1.05] md:scale-[1.3]"
-            src="https://www.youtube.com/embed/iucW5evsuLE?autoplay=1&mute=1&loop=1&playlist=iucW5evsuLE&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&start=60&playsinline=1&disablekb=1&fs=0"
-            title="Happy video background"
-            allow="autoplay; encrypted-media"
-            style={{ pointerEvents: 'none', border: 'none' }}
-          />
+          {/* Contenedor extra para recortar la UI de YouTube en móvil */}
+          <div className="absolute inset-[-100px] md:inset-0 overflow-hidden">
+            <iframe
+              className="absolute top-1/2 left-1/2 w-[200%] h-[200%] md:w-[150%] md:h-[150%] -translate-x-1/2 -translate-y-1/2 scale-[1.2] md:scale-[1.3]"
+              src="https://www.youtube.com/embed/iucW5evsuLE?autoplay=1&mute=1&loop=1&playlist=iucW5evsuLE&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&start=60&playsinline=1&disablekb=1&fs=0"
+              title="Happy video background"
+              allow="autoplay; encrypted-media"
+              style={{ pointerEvents: 'none', border: 'none' }}
+            />
+          </div>
           {/* Diagonal Gradient Overlay */}
           <div 
             className="absolute inset-0 bg-gradient-to-br from-background via-background/80 to-transparent"
