@@ -3,7 +3,7 @@ import { Facebook, Instagram, Mail, MapPin, Phone, Clock } from "lucide-react";
 
 export const Footer = () => {
   return (
-    <footer className="bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-foreground))] py-12 mt-20">
+    <footer className="bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-foreground))] py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo y descripción */}

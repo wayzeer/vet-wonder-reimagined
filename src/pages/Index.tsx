@@ -252,7 +252,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="diagonal" flip className="text-muted/30 bg-white" />
+      <SectionDivider variant="diagonal" flip className="text-muted/30 bg-white -mt-12 sm:-mt-16 md:-mt-20" />
 
       {/* News Section */}
       <section className="py-12 md:py-16 bg-white">
@@ -269,7 +269,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="wave" flip className="text-white bg-muted/30" />
+      <SectionDivider variant="wave" flip className="text-white bg-muted/30 -mt-12 sm:-mt-16 md:-mt-20" />
 
       {/* Instagram Section */}
       <section className="py-12 md:py-16 bg-muted/30">
@@ -280,7 +280,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="curve" className="text-primary bg-muted/30" />
+      <SectionDivider variant="curve" className="text-primary bg-muted/30 -mt-12 sm:-mt-16 md:-mt-20" />
 
       {/* Contact Section with Map */}
       <section className="py-12 md:py-16 bg-primary">
@@ -343,6 +343,9 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Blue and Orange Divider before Footer */}
+      <div className="w-full h-2 bg-gradient-to-r from-[hsl(var(--footer-bg))] via-[hsl(var(--footer-bg))] to-primary"></div>
 
       <Footer />
       <CookiesBanner />
