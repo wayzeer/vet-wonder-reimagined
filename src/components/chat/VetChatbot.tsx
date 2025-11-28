@@ -2,15 +2,18 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Calendar } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  showBookingForm?: boolean;
 }
 
 export function VetChatbot() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -87,9 +90,14 @@ export function VetChatbot() {
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               assistantMessage += content;
+              
+              // Detectar si debe mostrar formulario de citas
+              const showBooking = assistantMessage.includes('[SHOW_BOOKING_FORM]');
+              
               setMessages((prev) => {
                 const newMessages = [...prev];
-                newMessages[newMessages.length - 1].content = assistantMessage;
+                newMessages[newMessages.length - 1].content = assistantMessage.replace('[SHOW_BOOKING_FORM]', '');
+                newMessages[newMessages.length - 1].showBookingForm = showBooking;
                 return newMessages;
               });
             }
@@ -129,19 +137,43 @@ export function VetChatbot() {
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto space-y-4 pb-4">
             {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={idx}>
                 <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                    msg.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  <div
+                    className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                      msg.role === 'user'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  </div>
                 </div>
+                
+                {/* Formulario inline de reserva */}
+                {msg.showBookingForm && (
+                  <div className="mt-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      <h4 className="font-semibold text-sm">Reservar Cita</h4>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Te redirigiremos a tu área privada para completar la reserva
+                    </p>
+                    <Button 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => {
+                        setIsOpen(false);
+                        navigate('/auth');
+                      }}
+                    >
+                      Ir a Reservar Cita
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
             {isLoading && (

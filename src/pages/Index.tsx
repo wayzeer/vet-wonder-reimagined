@@ -9,6 +9,9 @@ import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { SectionDivider } from "@/components/layout/SectionDivider";
 import { ClinicMap } from "@/components/map/ClinicMap";
 import VetChatbot from "@/components/chat/VetChatbot";
+import { NewsFeed } from "@/components/news/NewsFeed";
+import { InstagramFeed } from "@/components/instagram/InstagramFeed";
+import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -31,16 +34,21 @@ export default function Index() {
       {/* Navigation */}
       <nav className="bg-card shadow-sm sticky top-0 z-30 backdrop-blur-md bg-card/90">
         <div className="container-custom flex items-center justify-between h-20">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="bg-primary/10 p-2 rounded-lg">
-              <PawPrint className="h-6 w-6 text-primary" />
-            </div>
-            <span className="text-2xl font-bold text-foreground tracking-tight">
-              Vet<span className="text-primary">Wonder</span>
-            </span>
-          </div>
+          <img 
+            src={logoVetWonder} 
+            alt="VetWonder Moralzarzal" 
+            className="h-16 cursor-pointer" 
+            onClick={() => navigate("/")}
+          />
           
           <div className="flex items-center gap-6">
+            <a 
+              href="tel:651503827" 
+              className="flex items-center gap-2 text-primary font-semibold hover:text-primary/80 transition-colors"
+            >
+              <Phone className="h-4 w-4" />
+              <span className="hidden sm:inline">651 50 38 27</span>
+            </a>
             <a href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</a>
             {isAuthenticated ? (
               <Button onClick={() => navigate("/dashboard")} className="bg-primary hover:bg-primary/90">
@@ -57,14 +65,14 @@ export default function Index() {
 
       {/* Hero Section with Video Background */}
       <section className="relative overflow-hidden min-h-[600px] flex items-center">
-        {/* Video Background */}
-        <div className="absolute inset-0 z-0">
+        {/* Video Background - sin overlays ni barras negras */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
-            className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2"
-            src="https://www.youtube.com/embed/iucW5evsuLE?autoplay=1&mute=1&loop=1&playlist=iucW5evsuLE&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&start=60"
-            title="Cute puppies video"
+            className="absolute top-1/2 left-1/2 w-[150%] h-[150%] -translate-x-1/2 -translate-y-1/2 scale-[1.3]"
+            src="https://www.youtube.com/embed/iucW5evsuLE?autoplay=1&mute=1&loop=1&playlist=iucW5evsuLE&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&start=60&playsinline=1&disablekb=1&fs=0"
+            title="Happy video background"
             allow="autoplay; encrypted-media"
-            style={{ pointerEvents: 'none' }}
+            style={{ pointerEvents: 'none', border: 'none' }}
           />
           {/* Diagonal Gradient Overlay */}
           <div 
@@ -165,6 +173,32 @@ export default function Index() {
       </section>
 
       <SectionDivider variant="diagonal" flip className="text-primary bg-muted/30" />
+
+      {/* News Section */}
+      <section className="py-16 bg-white">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Últimas Noticias</h2>
+            <p className="text-lg text-muted-foreground">Mantente informado sobre el cuidado de tu mascota</p>
+          </div>
+          <NewsFeed />
+        </div>
+      </section>
+
+      <SectionDivider variant="wave" flip className="text-muted" />
+
+      {/* Instagram Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Síguenos en Instagram</h2>
+            <p className="text-lg text-muted-foreground">Conoce a nuestros pacientes y el día a día de la clínica</p>
+          </div>
+          <InstagramFeed />
+        </div>
+      </section>
+
+      <SectionDivider variant="diagonal" className="text-primary" />
 
       {/* Contact Section with Map */}
       <section className="py-16 bg-white">
