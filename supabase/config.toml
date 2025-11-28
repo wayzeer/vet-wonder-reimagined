@@ -2,3 +2,6 @@ project_id = "REDACTED_PROJECT"
 
 [functions.chat-veterinario]
 verify_jwt = false
+
+[functions.pet-advice]
+verify_jwt = true

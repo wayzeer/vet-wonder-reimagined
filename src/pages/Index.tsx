@@ -4,6 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { PawPrint, Calendar, Heart, Activity, MapPin, Phone, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Footer } from "@/components/layout/Footer";
+import { CookiesBanner } from "@/components/layout/CookiesBanner";
+import { SectionDivider } from "@/components/layout/SectionDivider";
+import { ClinicMap } from "@/components/map/ClinicMap";
+import VetChatbot from "@/components/chat/VetChatbot";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -24,25 +29,25 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-30 backdrop-blur-md bg-white/90">
+      <nav className="bg-card shadow-sm sticky top-0 z-30 backdrop-blur-md bg-card/90">
         <div className="container-custom flex items-center justify-between h-20">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="bg-orange-100 p-2 rounded-lg">
-              <PawPrint className="h-6 w-6 text-orange-600" />
+            <div className="bg-primary/10 p-2 rounded-lg">
+              <PawPrint className="h-6 w-6 text-primary" />
             </div>
-            <span className="text-2xl font-bold text-gray-800 tracking-tight">
-              Vet<span className="text-orange-600">Wonder</span>
+            <span className="text-2xl font-bold text-foreground tracking-tight">
+              Vet<span className="text-primary">Wonder</span>
             </span>
           </div>
           
           <div className="flex items-center gap-6">
-            <a href="/blog" className="text-gray-600 hover:text-orange-600">Blog</a>
+            <a href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</a>
             {isAuthenticated ? (
-              <Button onClick={() => navigate("/dashboard")} className="bg-orange-600 hover:bg-orange-700">
+              <Button onClick={() => navigate("/dashboard")} className="bg-primary hover:bg-primary/90">
                 Mi Área
               </Button>
             ) : (
-              <Button onClick={() => navigate("/auth")} variant="ghost" className="text-gray-600 hover:text-orange-600">
+              <Button onClick={() => navigate("/auth")} variant="ghost" className="text-muted-foreground hover:text-primary">
                 Entrar
               </Button>
             )}
@@ -50,94 +55,107 @@ export default function Index() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative bg-gray-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="relative z-10 pb-8 bg-gray-50 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-            <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
-              <div className="sm:text-center lg:text-left">
-                <span className="inline-block py-1 px-3 rounded-full bg-orange-100 text-orange-700 text-xs font-bold uppercase tracking-wider mb-4">
-                  Veterinaria en Moralzarzal
-                </span>
-                <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl mb-6">
-                  <span className="block xl:inline">Salud animal con</span>{' '}
-                  <span className="block text-orange-600 xl:inline">ciencia y corazón</span>
-                </h1>
-                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                  Especialistas en medicina preventiva, cirugía y diagnóstico avanzado.
-                </p>
-                <div className="mt-8 sm:mt-10 sm:flex sm:justify-center lg:justify-start gap-4">
-                  <Button 
-                    onClick={() => navigate(isAuthenticated ? "/dashboard" : "/auth")} 
-                    className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 shadow-lg shadow-orange-500/30 transition-all hover:-translate-y-1 text-base md:text-lg px-8 py-6"
-                  >
-                    Pedir Cita Online
-                  </Button>
-                  <Button 
-                    onClick={() => navigate("/auth")} 
-                    variant="outline" 
-                    className="w-full sm:w-auto border-2 border-orange-100 text-orange-700 hover:bg-orange-50 text-base md:text-lg px-8 py-6"
-                  >
-                    Área Privada
-                  </Button>
-                </div>
-              </div>
-            </main>
-          </div>
-        </div>
-        <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 bg-white flex items-center justify-center">
-          <img 
-            className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" 
-            src="https://images.unsplash.com/photo-1544568100-847a9480835b?auto=format&fit=crop&w=800&q=80" 
-            alt="Veterinaria profesional" 
+      {/* Hero Section with Video Background */}
+      <section className="relative overflow-hidden min-h-[600px] flex items-center">
+        {/* Video Background */}
+        <div className="absolute inset-0 z-0">
+          <iframe
+            className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2"
+            src="https://www.youtube.com/embed/J---aiyznGQ?autoplay=1&mute=1&loop=1&playlist=J---aiyznGQ&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3"
+            title="Cute puppies video"
+            allow="autoplay; encrypted-media"
+            style={{ pointerEvents: 'none' }}
           />
+          {/* Diagonal Gradient Overlay */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/80 to-transparent"
+            style={{
+              WebkitMaskImage: 'linear-gradient(135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%)',
+              maskImage: 'linear-gradient(135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%)',
+            }}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="container-custom relative z-10 py-20">
+          <div className="max-w-2xl">
+            <span className="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 animate-fade-in">
+              Veterinaria en Moralzarzal
+            </span>
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <span className="block">Salud animal con</span>
+              <span className="block text-primary">ciencia y corazón</span>
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              Especialistas en medicina preventiva, cirugía y diagnóstico avanzado.
+            </p>
+            <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <Button 
+                onClick={() => navigate(isAuthenticated ? "/dashboard" : "/auth")} 
+                size="lg"
+                className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+              >
+                Pedir Cita Online
+              </Button>
+              <Button 
+                onClick={() => navigate("/auth")} 
+                variant="outline" 
+                size="lg"
+                className="border-2"
+              >
+                Área Privada
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
+      <SectionDivider variant="wave" className="text-muted" />
+
       {/* Services Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-muted/30">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Nuestros Servicios</h2>
-            <p className="text-lg text-gray-600">Cuidado integral para tu mascota</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Nuestros Servicios</h2>
+            <p className="text-lg text-muted-foreground">Cuidado integral para tu mascota</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="border-gray-200 hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
               <CardHeader>
-                <Heart className="h-8 w-8 text-orange-600 mb-2" />
-                <CardTitle className="text-gray-900">Medicina Preventiva</CardTitle>
-                <CardDescription className="text-gray-600">
+                <Heart className="h-8 w-8 text-primary mb-2" />
+                <CardTitle>Medicina Preventiva</CardTitle>
+                <CardDescription>
                   Vacunaciones, desparasitaciones y chequeos regulares
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="border-gray-200 hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
               <CardHeader>
-                <Activity className="h-8 w-8 text-orange-600 mb-2" />
-                <CardTitle className="text-gray-900">Cirugía</CardTitle>
-                <CardDescription className="text-gray-600">
+                <Activity className="h-8 w-8 text-primary mb-2" />
+                <CardTitle>Cirugía</CardTitle>
+                <CardDescription>
                   Quirófano equipado con tecnología de última generación
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="border-gray-200 hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
               <CardHeader>
-                <Calendar className="h-8 w-8 text-orange-600 mb-2" />
-                <CardTitle className="text-gray-900">Citas Online</CardTitle>
-                <CardDescription className="text-gray-600">
+                <Calendar className="h-8 w-8 text-primary mb-2" />
+                <CardTitle>Citas Online</CardTitle>
+                <CardDescription>
                   Reserva tu cita de forma rápida y sencilla
                 </CardDescription>
               </CardHeader>
             </Card>
 
-            <Card className="border-gray-200 hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
               <CardHeader>
-                <PawPrint className="h-8 w-8 text-orange-600 mb-2" />
-                <CardTitle className="text-gray-900">Historial Médico</CardTitle>
-                <CardDescription className="text-gray-600">
+                <PawPrint className="h-8 w-8 text-primary mb-2" />
+                <CardTitle>Historial Médico</CardTitle>
+                <CardDescription>
                   Acceso completo al historial de tu mascota
                 </CardDescription>
               </CardHeader>
@@ -146,33 +164,65 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-16 bg-gray-50">
+      <SectionDivider variant="diagonal" flip className="text-muted" />
+
+      {/* Contact Section with Map */}
+      <section className="py-16">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Visítanos</h2>
-            <p className="text-lg text-gray-600">Estamos en Moralzarzal, Madrid</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Visítanos</h2>
+            <p className="text-lg text-muted-foreground">Estamos en Moralzarzal, Madrid</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <MapPin className="h-8 w-8 text-orange-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">Dirección</h3>
-              <p className="text-gray-600 text-sm">Moralzarzal, Madrid</p>
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            {/* Contact Info */}
+            <div className="space-y-8">
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 p-3 rounded-lg">
+                  <MapPin className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Dirección</h3>
+                  <p className="text-muted-foreground">Calle Real 123<br />28411 Moralzarzal, Madrid</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 p-3 rounded-lg">
+                  <Phone className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Teléfono</h3>
+                  <a href="tel:651503827" className="text-muted-foreground hover:text-primary transition-colors">
+                    651 50 38 27
+                  </a>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 p-3 rounded-lg">
+                  <Mail className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Email</h3>
+                  <a href="mailto:info@vetwonder.es" className="text-muted-foreground hover:text-primary transition-colors">
+                    info@vetwonder.es
+                  </a>
+                </div>
+              </div>
             </div>
-            <div className="text-center">
-              <Phone className="h-8 w-8 text-orange-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">Teléfono</h3>
-              <p className="text-gray-600 text-sm">651 50 38 27</p>
-            </div>
-            <div className="text-center">
-              <Mail className="h-8 w-8 text-orange-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">Email</h3>
-              <p className="text-gray-600 text-sm">info@vetwonder.com</p>
+
+            {/* Map */}
+            <div className="animate-fade-in">
+              <ClinicMap />
             </div>
           </div>
         </div>
       </section>
+
+      <Footer />
+      <CookiesBanner />
+      <VetChatbot />
     </div>
   );
 }

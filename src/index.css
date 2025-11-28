@@ -25,6 +25,10 @@
     --input: 0 0% 90%;
     --ring: 24 95% 53%;
     --radius: 0.75rem;
+    
+    /* Dark blue for footer and contrast sections */
+    --footer-bg: 222 47% 11%;
+    --footer-foreground: 210 40% 98%;
   }
 
   .dark {
@@ -47,6 +51,9 @@
     --border: 0 0% 17%;
     --input: 0 0% 17%;
     --ring: 24 95% 53%;
+    
+    --footer-bg: 222 47% 11%;
+    --footer-foreground: 210 40% 98%;
   }
 }
 

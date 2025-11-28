@@ -180,3 +180,5 @@ export function VetChatbot() {
     </>
   );
 }
+
+export default VetChatbot;
