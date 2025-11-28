@@ -45,11 +45,11 @@ export default function Index() {
           
           <div className="flex items-center gap-6">
             <a 
-              href="tel:651503827" 
+              href="tel:918574379" 
               className="flex items-center gap-2 text-primary font-semibold hover:text-primary/80 transition-colors"
             >
               <Phone className="h-4 w-4" />
-              <span className="hidden sm:inline">651 50 38 27</span>
+              <span className="hidden sm:inline">918 57 43 79</span>
             </a>
             <a href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</a>
             {isAuthenticated ? (
