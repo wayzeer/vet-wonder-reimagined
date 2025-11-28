@@ -7,14 +7,20 @@ export function InstagramFeed() {
   
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-center gap-2 mb-8">
-        <Instagram className="h-6 w-6 text-primary" />
+      <div className="text-center mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
+          Adopta un compañero de vida
+        </h2>
+        <p className="text-lg text-muted-foreground mb-4">
+          Conoce a los animales que buscan hogar en La Huella de Wonder
+        </p>
         <a 
           href={`https://www.instagram.com/${instagramHandle}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-lg font-semibold hover:text-primary transition-colors"
+          className="inline-flex items-center gap-2 text-primary font-semibold hover:underline"
         >
+          <Instagram className="h-5 w-5" />
           @{instagramHandle}
         </a>
       </div>

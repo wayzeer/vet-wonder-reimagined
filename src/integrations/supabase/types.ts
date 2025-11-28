@@ -210,6 +210,65 @@ export type Database = {
           },
         ]
       }
+      guest_appointments: {
+        Row: {
+          appointment_type: string
+          clinic_id: string
+          created_at: string | null
+          guest_email: string
+          guest_name: string
+          guest_phone: string | null
+          id: string
+          notes: string | null
+          pet_name: string
+          pet_species: string
+          preferred_date: string
+          preferred_time: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          appointment_type: string
+          clinic_id: string
+          created_at?: string | null
+          guest_email: string
+          guest_name: string
+          guest_phone?: string | null
+          id?: string
+          notes?: string | null
+          pet_name: string
+          pet_species: string
+          preferred_date: string
+          preferred_time: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          appointment_type?: string
+          clinic_id?: string
+          created_at?: string | null
+          guest_email?: string
+          guest_name?: string
+          guest_phone?: string | null
+          id?: string
+          notes?: string | null
+          pet_name?: string
+          pet_species?: string
+          preferred_date?: string
+          preferred_time?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_appointments_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medical_records: {
         Row: {
           appointment_id: string | null

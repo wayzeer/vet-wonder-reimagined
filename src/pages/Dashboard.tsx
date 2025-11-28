@@ -10,6 +10,7 @@ import { PetsList } from "@/components/pets/PetsList";
 import { AppointmentCalendar } from "@/components/appointments/AppointmentCalendar";
 import { AppointmentForm } from "@/components/appointments/AppointmentForm";
 import { AppointmentsList } from "@/components/appointments/AppointmentsList";
+import { ProfileForm } from "@/components/profile/ProfileForm";
 import { VetChatbot } from "@/components/chat/VetChatbot";
 
 export default function Dashboard() {
@@ -96,6 +97,9 @@ export default function Dashboard() {
             <TabsTrigger value="payments" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-600">
               Pagos
             </TabsTrigger>
+            <TabsTrigger value="profile" className="data-[state=active]:bg-orange-50 data-[state=active]:text-orange-600">
+              Perfil
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="pets">
@@ -136,6 +140,18 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-500">No hay historial de pagos</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="profile">
+            <Card className="border-gray-200">
+              <CardHeader>
+                <CardTitle className="text-gray-900">Mi Perfil</CardTitle>
+                <CardDescription className="text-gray-600">Actualiza tu información personal</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ProfileForm />
               </CardContent>
             </Card>
           </TabsContent>

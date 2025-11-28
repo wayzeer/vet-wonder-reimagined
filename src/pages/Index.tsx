@@ -11,11 +11,13 @@ import { ClinicMap } from "@/components/map/ClinicMap";
 import VetChatbot from "@/components/chat/VetChatbot";
 import { NewsFeed } from "@/components/news/NewsFeed";
 import { InstagramFeed } from "@/components/instagram/InstagramFeed";
+import { GuestAppointmentDialog } from "@/components/appointments/GuestAppointmentDialog";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Index() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [guestDialogOpen, setGuestDialogOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -99,7 +101,7 @@ export default function Index() {
             </p>
             <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
               <Button 
-                onClick={() => navigate(isAuthenticated ? "/dashboard" : "/auth")} 
+                onClick={() => setGuestDialogOpen(true)}
                 size="lg"
                 className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
               >
@@ -118,7 +120,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="wave" className="text-muted" />
+      <SectionDivider variant="wave" className="text-primary" />
 
       {/* Services Section */}
       <section className="py-16 bg-muted/30">
@@ -185,37 +187,54 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="wave" flip className="text-muted" />
+      <SectionDivider variant="wave" flip className="text-muted/30" />
 
       {/* Instagram Section */}
       <section className="py-16 bg-muted/30">
         <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Síguenos en Instagram</h2>
-            <p className="text-lg text-muted-foreground">Conoce a nuestros pacientes y el día a día de la clínica</p>
-          </div>
           <InstagramFeed />
         </div>
       </section>
 
-      <SectionDivider variant="diagonal" className="text-primary" />
+      <SectionDivider variant="curve" className="text-primary bg-muted/30" />
 
       {/* Contact Section with Map */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-primary">
         <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Visítanos</h2>
-            <p className="text-lg text-muted-foreground">Estamos en Moralzarzal, Madrid</p>
-          </div>
-          
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            {/* Contact Info */}
-            <div className="space-y-8">
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                  <MapPin className="h-6 w-6 text-primary" />
-                </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-white text-center">
+            Visítanos
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6 text-white mx-auto max-w-md">
+              <div className="flex flex-col items-center text-center gap-3">
+                <MapPin className="h-6 w-6" />
                 <div>
+                  <h3 className="font-semibold mb-2">Dirección</h3>
+                  <p className="text-white/90">
+                    C. Capellanía, 25, Local 3<br />
+                    28411 Moralzarzal, Madrid
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center text-center gap-3">
+                <Phone className="h-6 w-6" />
+                <div>
+                  <h3 className="font-semibold mb-2">Teléfono</h3>
+                  <a href="tel:+34918574379" className="text-white/90 hover:text-white">
+                    +34 918 57 43 79
+                  </a>
+                </div>
+              </div>
+              <div className="flex flex-col items-center text-center gap-3">
+                <Mail className="h-6 w-6" />
+                <div>
+                  <h3 className="font-semibold mb-2">Email</h3>
+                  <a href="mailto:info@vetwonder.es" className="text-white/90 hover:text-white">
+                    info@vetwonder.es
+                  </a>
+                </div>
+              </div>
+            </div>
                   <h3 className="font-semibold text-lg mb-2">Dirección</h3>
                   <p className="text-muted-foreground">Calle Real 123<br />28411 Moralzarzal, Madrid</p>
                 </div>
@@ -257,6 +276,7 @@ export default function Index() {
       <Footer />
       <CookiesBanner />
       <VetChatbot />
+      <GuestAppointmentDialog open={guestDialogOpen} onOpenChange={setGuestDialogOpen} />
     </div>
   );
 }
