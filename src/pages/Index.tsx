@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { PawPrint, Calendar, Heart, Activity, MapPin, Phone, Mail } from "lucide-react";
+import { PawPrint, Calendar, Heart, Activity, MapPin, Phone, Mail, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { SectionDivider } from "@/components/layout/SectionDivider";
@@ -18,6 +19,7 @@ export default function Index() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [guestDialogOpen, setGuestDialogOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -35,21 +37,22 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="bg-card shadow-sm sticky top-0 z-30 backdrop-blur-md bg-card/90">
-        <div className="container-custom flex items-center justify-between h-20">
+        <div className="container-custom flex items-center justify-between h-16 md:h-20 px-4">
           <img 
             src={logoVetWonder} 
             alt="VetWonder Moralzarzal" 
-            className="h-16 cursor-pointer" 
+            className="h-12 md:h-16 cursor-pointer" 
             onClick={() => navigate("/")}
           />
           
-          <div className="flex items-center gap-6">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
             <a 
               href="tel:918574379" 
               className="flex items-center gap-2 text-primary font-semibold hover:text-primary/80 transition-colors"
             >
               <Phone className="h-4 w-4" />
-              <span className="hidden sm:inline">918 57 43 79</span>
+              <span>918 57 43 79</span>
             </a>
             <a href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</a>
             {isAuthenticated ? (
@@ -62,11 +65,72 @@ export default function Index() {
               </Button>
             )}
           </div>
+
+          {/* Mobile Navigation */}
+          <div className="flex md:hidden items-center gap-3">
+            <a 
+              href="tel:918574379" 
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary"
+            >
+              <Phone className="h-5 w-5" />
+            </a>
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-foreground">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px]">
+                <div className="flex flex-col gap-6 mt-8">
+                  <a 
+                    href="/blog" 
+                    className="text-lg font-medium hover:text-primary transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Blog
+                  </a>
+                  {isAuthenticated ? (
+                    <Button 
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/dashboard");
+                      }} 
+                      className="bg-primary hover:bg-primary/90 w-full"
+                      size="lg"
+                    >
+                      Mi Área
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/auth");
+                      }} 
+                      variant="outline"
+                      className="w-full"
+                      size="lg"
+                    >
+                      Entrar
+                    </Button>
+                  )}
+                  <div className="pt-6 border-t">
+                    <a 
+                      href="tel:918574379" 
+                      className="flex items-center gap-3 text-primary font-semibold"
+                    >
+                      <Phone className="h-5 w-5" />
+                      <span>918 57 43 79</span>
+                    </a>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </nav>
 
       {/* Hero Section with Video Background */}
-      <section className="relative overflow-hidden min-h-[600px] flex items-center">
+      <section className="relative overflow-hidden min-h-[500px] md:min-h-[600px] flex items-center">
         {/* Video Background - sin overlays ni barras negras */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
@@ -87,23 +151,23 @@ export default function Index() {
         </div>
 
         {/* Content */}
-        <div className="container-custom relative z-10 py-20">
+        <div className="container-custom relative z-10 py-12 md:py-20 px-4">
           <div className="max-w-2xl">
-            <span className="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 animate-fade-in">
+            <span className="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3 md:mb-4 animate-fade-in">
               Veterinaria en Moralzarzal
             </span>
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 md:mb-6 animate-fade-in leading-tight" style={{ animationDelay: '0.1s' }}>
               <span className="block">Salud animal con</span>
               <span className="block text-primary">ciencia y corazón</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 md:mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
               Especialistas en medicina preventiva, cirugía y diagnóstico avanzado.
             </p>
-            <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
               <Button 
                 onClick={() => setGuestDialogOpen(true)}
                 size="lg"
-                className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+                className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 w-full sm:w-auto"
               >
                 Pedir Cita Online
               </Button>
@@ -111,7 +175,7 @@ export default function Index() {
                 onClick={() => navigate("/auth")} 
                 variant="outline" 
                 size="lg"
-                className="border-2"
+                className="border-2 w-full sm:w-auto"
               >
                 Área Privada
               </Button>
@@ -123,11 +187,11 @@ export default function Index() {
       <SectionDivider variant="wave" className="text-background bg-muted/30 -mt-24 relative z-20" />
 
       {/* Services Section */}
-      <section className="py-16 bg-muted/30">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Nuestros Servicios</h2>
-            <p className="text-lg text-muted-foreground">Cuidado integral para tu mascota</p>
+      <section className="py-12 md:py-16 bg-muted/30">
+        <div className="container-custom px-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4">Nuestros Servicios</h2>
+            <p className="text-base md:text-lg text-muted-foreground">Cuidado integral para tu mascota</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -177,11 +241,11 @@ export default function Index() {
       <SectionDivider variant="diagonal" flip className="text-muted/30 bg-white" />
 
       {/* News Section */}
-      <section className="py-16 bg-white">
-        <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Últimas Noticias</h2>
-            <p className="text-lg text-muted-foreground">Mantente informado sobre el cuidado de tu mascota</p>
+      <section className="py-12 md:py-16 bg-white">
+        <div className="container-custom px-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4">Últimas Noticias</h2>
+            <p className="text-base md:text-lg text-muted-foreground">Mantente informado sobre el cuidado de tu mascota</p>
           </div>
           <NewsFeed />
         </div>
@@ -190,8 +254,8 @@ export default function Index() {
       <SectionDivider variant="wave" flip className="text-white bg-muted/30" />
 
       {/* Instagram Section */}
-      <section className="py-16 bg-muted/30">
-        <div className="container-custom">
+      <section className="py-12 md:py-16 bg-muted/30">
+        <div className="container-custom px-4">
           <InstagramFeed />
         </div>
       </section>
@@ -199,12 +263,12 @@ export default function Index() {
       <SectionDivider variant="curve" className="text-primary bg-muted/30" />
 
       {/* Contact Section with Map */}
-      <section className="py-16 bg-primary">
-        <div className="container-custom">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-white text-center">
+      <section className="py-12 md:py-16 bg-primary">
+        <div className="container-custom px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-12 text-white text-center">
             Visítanos
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
             <div className="space-y-6 text-white mx-auto max-w-md">
               <div className="flex flex-col items-center text-center gap-3">
                 <MapPin className="h-6 w-6" />
