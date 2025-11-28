@@ -13,6 +13,7 @@ import VetChatbot from "@/components/chat/VetChatbot";
 import { NewsFeed } from "@/components/news/NewsFeed";
 import { InstagramFeed } from "@/components/instagram/InstagramFeed";
 import { GuestAppointmentDialog } from "@/components/appointments/GuestAppointmentDialog";
+import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Index() {
@@ -131,10 +132,10 @@ export default function Index() {
 
       {/* Hero Section with Video Background */}
       <section className="relative overflow-hidden min-h-[500px] md:min-h-[600px] flex items-center">
-        {/* Video Background - sin overlays ni barras negras */}
+        {/* Video Background - optimizado para móvil */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
-            className="absolute top-1/2 left-1/2 w-[150%] h-[150%] -translate-x-1/2 -translate-y-1/2 scale-[1.3]"
+            className="absolute top-1/2 left-1/2 w-full h-full md:w-[150%] md:h-[150%] -translate-x-1/2 -translate-y-1/2 scale-[1.05] md:scale-[1.3]"
             src="https://www.youtube.com/embed/iucW5evsuLE?autoplay=1&mute=1&loop=1&playlist=iucW5evsuLE&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&start=60&playsinline=1&disablekb=1&fs=0"
             title="Happy video background"
             allow="autoplay; encrypted-media"
@@ -189,51 +190,61 @@ export default function Index() {
       {/* Services Section */}
       <section className="py-12 md:py-16 bg-muted/30">
         <div className="container-custom px-4">
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4">Nuestros Servicios</h2>
-            <p className="text-base md:text-lg text-muted-foreground">Cuidado integral para tu mascota</p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center mb-8 md:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4">Nuestros Servicios</h2>
+              <p className="text-base md:text-lg text-muted-foreground">Cuidado integral para tu mascota</p>
+            </div>
+          </ScrollReveal>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
-              <CardHeader>
-                <Heart className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Medicina Preventiva</CardTitle>
-                <CardDescription>
-                  Vacunaciones, desparasitaciones y chequeos regulares
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <ScrollReveal delay={100}>
+              <Card className="hover:shadow-lg transition-all hover:-translate-y-1 h-full">
+                <CardHeader>
+                  <Heart className="h-8 w-8 text-primary mb-2" />
+                  <CardTitle>Medicina Preventiva</CardTitle>
+                  <CardDescription>
+                    Vacunaciones, desparasitaciones y chequeos regulares
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </ScrollReveal>
 
-            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
-              <CardHeader>
-                <Activity className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Cirugía</CardTitle>
-                <CardDescription>
-                  Quirófano equipado con tecnología de última generación
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <ScrollReveal delay={200}>
+              <Card className="hover:shadow-lg transition-all hover:-translate-y-1 h-full">
+                <CardHeader>
+                  <Activity className="h-8 w-8 text-primary mb-2" />
+                  <CardTitle>Cirugía</CardTitle>
+                  <CardDescription>
+                    Quirófano equipado con tecnología de última generación
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </ScrollReveal>
 
-            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
-              <CardHeader>
-                <Calendar className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Citas Online</CardTitle>
-                <CardDescription>
-                  Reserva tu cita de forma rápida y sencilla
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <ScrollReveal delay={300}>
+              <Card className="hover:shadow-lg transition-all hover:-translate-y-1 h-full">
+                <CardHeader>
+                  <Calendar className="h-8 w-8 text-primary mb-2" />
+                  <CardTitle>Citas Online</CardTitle>
+                  <CardDescription>
+                    Reserva tu cita de forma rápida y sencilla
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </ScrollReveal>
 
-            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
-              <CardHeader>
-                <PawPrint className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Historial Médico</CardTitle>
-                <CardDescription>
-                  Acceso completo al historial de tu mascota
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <ScrollReveal delay={400}>
+              <Card className="hover:shadow-lg transition-all hover:-translate-y-1 h-full">
+                <CardHeader>
+                  <PawPrint className="h-8 w-8 text-primary mb-2" />
+                  <CardTitle>Historial Médico</CardTitle>
+                  <CardDescription>
+                    Acceso completo al historial de tu mascota
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -243,11 +254,15 @@ export default function Index() {
       {/* News Section */}
       <section className="py-12 md:py-16 bg-white">
         <div className="container-custom px-4">
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4">Últimas Noticias</h2>
-            <p className="text-base md:text-lg text-muted-foreground">Mantente informado sobre el cuidado de tu mascota</p>
-          </div>
-          <NewsFeed />
+          <ScrollReveal>
+            <div className="text-center mb-8 md:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4">Últimas Noticias</h2>
+              <p className="text-base md:text-lg text-muted-foreground">Mantente informado sobre el cuidado de tu mascota</p>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={100}>
+            <NewsFeed />
+          </ScrollReveal>
         </div>
       </section>
 
@@ -256,7 +271,9 @@ export default function Index() {
       {/* Instagram Section */}
       <section className="py-12 md:py-16 bg-muted/30">
         <div className="container-custom px-4">
-          <InstagramFeed />
+          <ScrollReveal>
+            <InstagramFeed />
+          </ScrollReveal>
         </div>
       </section>
 
@@ -265,11 +282,14 @@ export default function Index() {
       {/* Contact Section with Map */}
       <section className="py-12 md:py-16 bg-primary">
         <div className="container-custom px-4">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-12 text-white text-center">
-            Visítanos
-          </h2>
+          <ScrollReveal>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-12 text-white text-center">
+              Visítanos
+            </h2>
+          </ScrollReveal>
           <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-            <div className="space-y-6 text-white mx-auto max-w-md">
+            <ScrollReveal delay={100}>
+              <div className="space-y-6 text-white mx-auto max-w-md">
               <div className="flex flex-col items-center text-center gap-3">
                 <MapPin className="h-6 w-6" />
                 <div>
@@ -308,12 +328,15 @@ export default function Index() {
                   </p>
                 </div>
               </div>
-            </div>
+              </div>
+            </ScrollReveal>
 
             {/* Map */}
-            <div className="animate-fade-in">
-              <ClinicMap />
-            </div>
+            <ScrollReveal delay={200}>
+              <div>
+                <ClinicMap />
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
