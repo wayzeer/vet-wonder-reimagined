@@ -188,7 +188,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="wave" className="text-background bg-muted/30 -mt-24 relative z-20" />
+      <SectionDivider variant="wave" className="text-background bg-muted/30 -mt-16 sm:-mt-20 md:-mt-24 relative z-20" />
 
       {/* Services Section */}
       <section className="py-12 md:py-16 bg-muted/30">
