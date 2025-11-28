@@ -95,7 +95,7 @@ export const Footer = () => {
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              Automomio.es
+              autonomio.es
             </a>
           </p>
         </div>

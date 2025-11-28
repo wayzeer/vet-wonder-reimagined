@@ -120,7 +120,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="wave" className="text-primary bg-background" />
+      <SectionDivider variant="wave" className="text-muted/30 bg-background" />
 
       {/* Services Section */}
       <section className="py-16 bg-muted/30">
@@ -174,7 +174,7 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="diagonal" flip className="text-primary bg-muted/30" />
+      <SectionDivider variant="diagonal" flip className="text-white bg-muted/30" />
 
       {/* News Section */}
       <section className="py-16 bg-white">
