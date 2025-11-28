@@ -5,6 +5,14 @@ import { Input } from "@/components/ui/input";
 import { MessageCircle, X, Send, Loader2, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useRateLimit } from "@/hooks/useRateLimit";
+import { z } from "zod";
+
+// Input validation
+const messageSchema = z.string()
+  .trim()
+  .min(1, "El mensaje no puede estar vacío")
+  .max(500, "El mensaje no puede exceder 500 caracteres");
 
 interface Message {
   role: 'user' | 'assistant';
@@ -24,6 +32,13 @@ export function VetChatbot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Rate limiting: 10 mensajes cada 5 minutos
+  const { checkRateLimit, isRateLimited, remainingTime } = useRateLimit({
+    maxAttempts: 10,
+    windowMs: 5 * 60 * 1000, // 5 minutos
+    storageKey: 'chatbot_rate_limit',
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,8 +50,24 @@ export function VetChatbot() {
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
+    
+    // Validate input
+    try {
+      messageSchema.parse(input);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+        return;
+      }
+    }
+    
+    // Check rate limit
+    if (!checkRateLimit()) {
+      toast.error(`Demasiadas consultas. Espera ${remainingTime} segundos o llama al 918 57 43 79.`);
+      return;
+    }
 
-    const userMessage: Message = { role: 'user', content: input };
+    const userMessage: Message = { role: 'user', content: input.trim() };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -53,11 +84,11 @@ export function VetChatbot() {
 
       if (!response.ok) {
         if (response.status === 429) {
-          toast.error('Se ha alcanzado el límite de consultas. Llama al 651 50 38 27');
+          toast.error('Se ha alcanzado el límite de consultas. Llama al 918 57 43 79');
           return;
         }
         if (response.status === 402) {
-          toast.error('Servicio temporalmente no disponible. Llama al 651 50 38 27');
+          toast.error('Servicio temporalmente no disponible. Llama al 918 57 43 79');
           return;
         }
         throw new Error('Error al procesar tu consulta');
@@ -199,12 +230,17 @@ export function VetChatbot() {
                 placeholder="Escribe tu consulta..."
                 disabled={isLoading}
               />
-              <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+              <Button type="submit" size="icon" disabled={isLoading || !input.trim() || isRateLimited}>
                 <Send className="h-4 w-4" />
               </Button>
             </form>
+            {isRateLimited && (
+              <p className="text-xs text-destructive mt-2 text-center font-medium">
+                Límite alcanzado. Espera {remainingTime}s
+              </p>
+            )}
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              En urgencias, llama al 651 50 38 27
+              En urgencias, llama al 918 57 43 79
             </p>
           </div>
         </Card>

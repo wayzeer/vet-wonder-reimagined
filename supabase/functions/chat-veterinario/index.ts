@@ -30,11 +30,11 @@ URGENCIAS VITALES (responde INMEDIATAMENTE con alerta):
 - Golpe de calor severo
 - Colapso o pérdida de consciencia
 
-Si detectas una URGENCIA, responde:
+If detectas una URGENCIA, responde:
 "🚨 URGENCIA VETERINARIA - Acude inmediatamente a:
 VetWonder Moralzarzal
-📞 651 50 38 27
-📍 Calle Example, 123
+📞 918 57 43 79
+📍 C. Capellanía, 25, Local 3, 28411 Moralzarzal, Madrid
 
 Mientras llegas: [instrucción específica muy breve si aplica]"
 
@@ -46,7 +46,7 @@ DERIVACIÓN A CITA (cuando NO es urgencia pero necesita revisión):
 - Cualquier duda que requiera exploración física
 
 Para derivar di algo como:
-"Te recomiendo pedir cita para que un veterinario evalúe esto en persona. Puedes llamar al 651 50 38 27 o reservar online."
+"Te recomiendo pedir cita para que un veterinario evalúe esto en persona. Puedes llamar al 918 57 43 79 o reservar online."
 
 DETECCIÓN DE INTENCIÓN DE CITA:
 Cuando el usuario mencione palabras como "cita", "reservar", "pedir cita", "quiero una cita", "necesito cita", "appointment", responde con:
@@ -55,7 +55,7 @@ Cuando el usuario mencione palabras como "cita", "reservar", "pedir cita", "quie
 
 [SHOW_BOOKING_FORM]
 
-También puedes llamar directamente al 651 50 38 27 si lo prefieres."
+También puedes llamar directamente al 918 57 43 79 si lo prefieres."
 
 El marcador [SHOW_BOOKING_FORM] activará un formulario inline en el chat.
 
@@ -67,8 +67,8 @@ LIMITACIONES (nunca hagas):
 
 INFORMACIÓN DE LA CLÍNICA:
 - Nombre: VetWonder Moralzarzal
-- Teléfono: 651 50 38 27
-- Ubicación: Calle Example, 123, Moralzarzal, Madrid
+- Teléfono: 918 57 43 79
+- Ubicación: C. Capellanía, 25, Local 3, 28411 Moralzarzal, Madrid
 - Servicios: Consultas, urgencias, cirugía, vacunaciones, peluquería
 
 Ejemplos de preguntas que SÍ puedes responder directamente:
@@ -111,7 +111,7 @@ serve(async (req) => {
     if (!response.ok) {
       if (response.status === 429) {
         return new Response(JSON.stringify({ 
-          error: 'Se ha alcanzado el límite de consultas. Por favor, intenta de nuevo en unos minutos o llama al 651 50 38 27.' 
+          error: 'Se ha alcanzado el límite de consultas. Por favor, intenta de nuevo en unos minutos o llama al 918 57 43 79.' 
         }), {
           status: 429,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -119,7 +119,7 @@ serve(async (req) => {
       }
       if (response.status === 402) {
         return new Response(JSON.stringify({ 
-          error: 'Servicio temporalmente no disponible. Por favor, llama al 651 50 38 27.' 
+          error: 'Servicio temporalmente no disponible. Por favor, llama al 918 57 43 79.' 
         }), {
           status: 402,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },

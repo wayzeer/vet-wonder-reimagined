@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useRateLimit } from "@/hooks/useRateLimit";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +24,40 @@ import {
 } from "@/components/ui/select";
 import { Calendar, Loader2 } from "lucide-react";
 
+// Validation schema
+const guestAppointmentSchema = z.object({
+  guestName: z.string()
+    .trim()
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(100, "El nombre no puede exceder 100 caracteres"),
+  guestEmail: z.string()
+    .trim()
+    .email("Email inválido")
+    .max(255, "El email no puede exceder 255 caracteres"),
+  guestPhone: z.string()
+    .trim()
+    .max(20, "El teléfono no puede exceder 20 caracteres")
+    .optional(),
+  petName: z.string()
+    .trim()
+    .min(1, "El nombre de la mascota es requerido")
+    .max(50, "El nombre no puede exceder 50 caracteres"),
+  petSpecies: z.string()
+    .min(1, "La especie es requerida"),
+  appointmentType: z.string()
+    .min(1, "El tipo de consulta es requerido"),
+  preferredDate: z.string()
+    .min(1, "La fecha es requerida"),
+  preferredTime: z.string()
+    .min(1, "La hora es requerida"),
+  notes: z.string()
+    .trim()
+    .max(1000, "Las notas no pueden exceder 1000 caracteres")
+    .optional(),
+});
+
+type GuestAppointmentForm = z.infer<typeof guestAppointmentSchema>;
+
 interface GuestAppointmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -35,6 +71,13 @@ export const GuestAppointmentDialog = ({
   const { toast } = useToast();
   const [step, setStep] = useState<"choice" | "guest" | "success">("choice");
   const [loading, setLoading] = useState(false);
+  
+  // Rate limiting: 3 intentos cada 15 minutos
+  const { checkRateLimit, isRateLimited, remainingTime } = useRateLimit({
+    maxAttempts: 3,
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    storageKey: 'guest_appointment_rate_limit',
+  });
   const [formData, setFormData] = useState({
     guestName: "",
     guestEmail: "",
@@ -49,6 +92,31 @@ export const GuestAppointmentDialog = ({
 
   const handleGuestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form data
+    try {
+      guestAppointmentSchema.parse(formData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Error de validación",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
+    // Check rate limit
+    if (!checkRateLimit()) {
+      toast({
+        title: "Demasiados intentos",
+        description: `Por favor, espera ${remainingTime} segundos antes de intentar de nuevo. Para urgencias, llama al 918 57 43 79.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -294,11 +362,15 @@ export const GuestAppointmentDialog = ({
                 />
               </div>
 
-              <Button type="submit" disabled={loading} className="w-full">
+              <Button type="submit" disabled={loading || isRateLimited} className="w-full">
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Enviando...
+                  </>
+                ) : isRateLimited ? (
+                  <>
+                    Espera {remainingTime}s
                   </>
                 ) : (
                   <>
