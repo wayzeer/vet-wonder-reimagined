@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
 import { VetChatbot } from "@/components/chat/VetChatbot";
 import { Link } from "react-router-dom";
+import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Blog() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -65,8 +66,12 @@ export default function Blog() {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="text-2xl font-bold text-primary">
-              VetWonder
+            <Link to="/">
+              <img 
+                src={logoVetWonder} 
+                alt="VetWonder" 
+                className="h-12"
+              />
             </Link>
             <nav className="flex gap-6">
               <Link to="/" className="hover:text-primary">Inicio</Link>

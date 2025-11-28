@@ -81,6 +81,7 @@ export function PetCard({ pet, onDeleted }: { pet: Pet; onDeleted?: () => void }
             <img
               src={pet.photo_url}
               alt={pet.name}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
           ) : (
@@ -162,6 +163,7 @@ export function PetCard({ pet, onDeleted }: { pet: Pet; onDeleted?: () => void }
             <img 
               src="/src/assets/pet-advice-illustration.jpg" 
               alt="Pet advice" 
+              loading="lazy"
               className="w-24 h-24 object-cover rounded-lg"
             />
             <DialogHeader className="flex-1">
