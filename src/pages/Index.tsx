@@ -35,7 +35,8 @@ export default function Index() {
             </span>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            <a href="/blog" className="text-gray-600 hover:text-orange-600">Blog</a>
             {isAuthenticated ? (
               <Button onClick={() => navigate("/dashboard")} className="bg-orange-600 hover:bg-orange-700">
                 Mi Área

@@ -1,1 +1,4 @@
 project_id = "REDACTED_PROJECT"
+
+[functions.chat-veterinario]
+verify_jwt = false

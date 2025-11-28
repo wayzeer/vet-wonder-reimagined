@@ -5,12 +5,18 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PawPrint, Calendar, FileText, CreditCard, LogOut, Plus } from "lucide-react";
+import { PawPrint, LogOut } from "lucide-react";
+import { PetsList } from "@/components/pets/PetsList";
+import { AppointmentCalendar } from "@/components/appointments/AppointmentCalendar";
+import { AppointmentForm } from "@/components/appointments/AppointmentForm";
+import { AppointmentsList } from "@/components/appointments/AppointmentsList";
+import { VetChatbot } from "@/components/chat/VetChatbot";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -48,7 +54,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
       <nav className="bg-white shadow-sm sticky top-0 z-30 backdrop-blur-md bg-white/90">
         <div className="container-custom flex items-center justify-between h-20">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
@@ -93,83 +98,51 @@ export default function Dashboard() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="pets" className="space-y-4">
-            <Card className="border-gray-200">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-gray-900">Mis Mascotas</CardTitle>
-                    <CardDescription className="text-gray-600">Gestiona los perfiles de tus mascotas</CardDescription>
-                  </div>
-                  <Button className="bg-orange-600 hover:bg-orange-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Añadir Mascota
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-gray-500">
-                  <PawPrint className="h-12 w-12 mx-auto mb-4 opacity-50 text-orange-600" />
-                  <p>No hay mascotas añadidas. ¡Haz clic en "Añadir Mascota" para empezar!</p>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="pets">
+            <PetsList />
           </TabsContent>
 
-          <TabsContent value="appointments" className="space-y-4">
-            <Card className="border-gray-200">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-gray-900">Citas</CardTitle>
-                    <CardDescription className="text-gray-600">Ver y gestionar tus citas</CardDescription>
-                  </div>
-                  <Button className="bg-orange-600 hover:bg-orange-700">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Reservar Cita
-                  </Button>
+          <TabsContent value="appointments">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Reservar Nueva Cita</h2>
+                <p className="text-gray-600 mb-6">Selecciona fecha y completa el formulario</p>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <AppointmentCalendar onDateSelect={setSelectedDate} />
+                  <AppointmentForm selectedDate={selectedDate} onSuccess={() => window.location.reload()} />
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-gray-500">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50 text-orange-600" />
-                  <p>No hay citas programadas</p>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+              <AppointmentsList />
+            </div>
           </TabsContent>
 
-          <TabsContent value="records" className="space-y-4">
+          <TabsContent value="records">
             <Card className="border-gray-200">
               <CardHeader>
                 <CardTitle className="text-gray-900">Historial Médico</CardTitle>
                 <CardDescription className="text-gray-600">Consulta el historial médico de tus mascotas</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12 text-gray-500">
-                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50 text-orange-600" />
-                  <p>No hay registros médicos todavía</p>
-                </div>
+                <p className="text-gray-500">El historial médico estará disponible próximamente.</p>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="payments" className="space-y-4">
+          <TabsContent value="payments">
             <Card className="border-gray-200">
               <CardHeader>
                 <CardTitle className="text-gray-900">Historial de Pagos</CardTitle>
                 <CardDescription className="text-gray-600">Consulta tu historial de pagos y facturas</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12 text-gray-500">
-                  <CreditCard className="h-12 w-12 mx-auto mb-4 opacity-50 text-orange-600" />
-                  <p>No hay historial de pagos</p>
-                </div>
+                <p className="text-gray-500">No hay historial de pagos</p>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
+
+      <VetChatbot />
     </div>
   );
 }
