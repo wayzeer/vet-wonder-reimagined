@@ -1,12 +1,12 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -70,12 +70,15 @@ Deno.serve(async (req) => {
 
     // Preparar recordatorios de citas
     for (const apt of appointments || []) {
+      const profile = Array.isArray(apt.profiles) ? apt.profiles[0] : apt.profiles;
+      const pet = Array.isArray(apt.pets) ? apt.pets[0] : apt.pets;
+      
       reminders.push({
         type: 'appointment',
         id: apt.id,
-        name: apt.profiles?.full_name || 'Cliente',
-        phone: apt.profiles?.phone,
-        pet_name: apt.pets?.name,
+        name: profile?.full_name || 'Cliente',
+        phone: profile?.phone,
+        pet_name: pet?.name,
         appointment_date: apt.appointment_date,
         appointment_type: apt.appointment_type,
       });
@@ -83,12 +86,15 @@ Deno.serve(async (req) => {
 
     // Preparar recordatorios de vacunas
     for (const vac of vaccinations || []) {
+      const profile = Array.isArray(vac.profiles) ? vac.profiles[0] : vac.profiles;
+      const pet = Array.isArray(vac.pets) ? vac.pets[0] : vac.pets;
+      
       reminders.push({
         type: 'vaccination',
         id: vac.id,
-        name: vac.profiles?.full_name || 'Cliente',
-        phone: vac.profiles?.phone,
-        pet_name: vac.pets?.name,
+        name: profile?.full_name || 'Cliente',
+        phone: profile?.phone,
+        pet_name: pet?.name,
         vaccine_name: vac.vaccine_name,
         due_date: vac.next_due_date,
       });
