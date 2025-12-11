@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useRateLimit } from "@/hooks/useRateLimit";
+import { useHoneypot } from "@/hooks/useHoneypot";
+import { logSecurityEvent } from "@/lib/security-logger";
 import { z } from "zod";
 import {
   Dialog,
@@ -78,6 +80,13 @@ export const GuestAppointmentDialog = ({
     windowMs: 15 * 60 * 1000, // 15 minutos
     storageKey: 'guest_appointment_rate_limit',
   });
+  
+  // Honeypot anti-bot
+  const { honeypotField, honeypotValue, setHoneypotValue, checkHoneypot } = useHoneypot({
+    fieldName: 'company_website',
+    minSubmitTime: 2000,
+  });
+  
   const [formData, setFormData] = useState({
     guestName: "",
     guestEmail: "",
@@ -92,6 +101,18 @@ export const GuestAppointmentDialog = ({
 
   const handleGuestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check honeypot first (silent bot detection)
+    const honeypotCheck = checkHoneypot();
+    if (honeypotCheck.isBot) {
+      // Log silenciosamente y simular éxito
+      await logSecurityEvent('honeypot_triggered', 'guest_appointment', {
+        reason: honeypotCheck.reason,
+      });
+      // Simular éxito para confundir al bot
+      setStep("success");
+      return;
+    }
     
     // Validate form data
     try {
@@ -109,6 +130,7 @@ export const GuestAppointmentDialog = ({
     
     // Check rate limit
     if (!checkRateLimit()) {
+      await logSecurityEvent('rate_limit_hit', 'guest_appointment');
       toast({
         title: "Demasiados intentos",
         description: `Por favor, espera ${remainingTime} segundos antes de intentar de nuevo. Para urgencias, llama al 918 57 43 79.`,
@@ -226,6 +248,23 @@ export const GuestAppointmentDialog = ({
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleGuestSubmit} className="space-y-4 pt-4">
+              {/* Honeypot field - invisible to humans, filled by bots */}
+              <div 
+                className="absolute left-[-9999px] opacity-0 pointer-events-none" 
+                aria-hidden="true"
+              >
+                <label htmlFor={honeypotField}>Leave this empty</label>
+                <input
+                  id={honeypotField}
+                  name={honeypotField}
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypotValue}
+                  onChange={(e) => setHoneypotValue(e.target.value)}
+                />
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="guestName">Nombre completo *</Label>
                 <Input

@@ -6,6 +6,7 @@ import { MessageCircle, X, Send, Loader2, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useRateLimit } from "@/hooks/useRateLimit";
+import { logSecurityEvent, detectSuspiciousPattern } from "@/lib/security-logger";
 import { z } from "zod";
 
 // Input validation
@@ -63,7 +64,18 @@ export function VetChatbot() {
     
     // Check rate limit
     if (!checkRateLimit()) {
+      await logSecurityEvent('rate_limit_hit', 'chatbot');
       toast.error(`Demasiadas consultas. Espera ${remainingTime} segundos o llama al 918 57 43 79.`);
+      return;
+    }
+    
+    // Check for suspicious patterns
+    const patternCheck = detectSuspiciousPattern(input);
+    if (patternCheck.isSuspicious) {
+      await logSecurityEvent('suspicious_pattern', 'chatbot', {
+        reason: patternCheck.reason,
+      });
+      toast.error('Tu mensaje contiene contenido no permitido.');
       return;
     }
 
