@@ -49,7 +49,9 @@ interface BlogPost {
     content: string;
     category: string;
     featured_image: string | null;
+    featured_image_url?: string | null;
     is_published: boolean;
+    published?: boolean;
     published_at: string | null;
     created_at: string;
 }
@@ -99,7 +101,21 @@ export const BlogManager = () => {
                 .order("created_at", { ascending: false });
 
             if (error) throw error;
-            return data as BlogPost[];
+
+            // Map database columns to interface (handle both old and new schemas)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return (data || []).map((post: any) => ({
+                id: post.id,
+                title: post.title,
+                slug: post.slug,
+                excerpt: post.excerpt,
+                content: post.content,
+                category: post.category || "Consejos",
+                featured_image: post.featured_image || post.featured_image_url || null,
+                is_published: post.is_published ?? post.published ?? false,
+                published_at: post.published_at,
+                created_at: post.created_at,
+            })) as BlogPost[];
         },
     });
 
@@ -191,7 +207,7 @@ export const BlogManager = () => {
         },
     });
 
-    // Generate content with AI using Supabase Edge Function
+    // Generate content with AI using Vercel API
     const handleGenerate = async () => {
         if (!topic.trim()) {
             toast.error("Por favor, introduce un tema");
@@ -200,17 +216,19 @@ export const BlogManager = () => {
 
         setIsGenerating(true);
         try {
-            const { data, error } = await supabase.functions.invoke("generate-blog-post", {
-                body: {
+            const response = await fetch("/api/generate-blog-post", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
                     topic,
                     category,
                     wordCount: parseInt(wordCount),
-                },
+                }),
             });
 
-            if (error) throw error;
+            const data = await response.json();
 
-            if (!data.success) {
+            if (!response.ok || !data.success) {
                 throw new Error(data.error || "Error al generar contenido");
             }
 
