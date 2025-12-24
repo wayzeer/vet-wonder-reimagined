@@ -3,14 +3,28 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, ArrowLeft, Phone } from "lucide-react";
+import { Calendar, ArrowLeft, Phone, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { VetChatbot } from "@/components/chat/VetChatbot";
+import logoVetWonder from "@/assets/logo-vetwonder.png";
+
+interface BlogPostData {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  category: string;
+  featured_image: string | null;
+  is_published: boolean;
+  published_at: string | null;
+  created_at: string;
+}
 
 export default function BlogPost() {
   const { slug } = useParams();
-  const [post, setPost] = useState<any>(null);
+  const [post, setPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,16 +34,17 @@ export default function BlogPost() {
   const loadPost = async () => {
     try {
       const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('slug', slug)
-        .eq('published', true)
+        .from("blog_posts")
+        .select("*")
+        .eq("slug", slug)
+        .eq("is_published", true)
         .single();
 
       if (error) throw error;
       setPost(data);
     } catch (error) {
       console.error("Error cargando artículo:", error);
+      setPost(null);
     } finally {
       setLoading(false);
     }
@@ -38,7 +53,7 @@ export default function BlogPost() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Cargando artículo...
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -56,10 +71,11 @@ export default function BlogPost() {
 
   const getCategoryColor = (category?: string) => {
     switch (category) {
-      case 'Alerta': return 'bg-red-500';
+      case 'Salud': return 'bg-red-500';
       case 'Prevención': return 'bg-blue-500';
-      case 'Normativa': return 'bg-purple-500';
+      case 'Nutrición': return 'bg-amber-500';
       case 'Consejos': return 'bg-green-500';
+      case 'Noticias': return 'bg-purple-500';
       default: return 'bg-gray-500';
     }
   };
@@ -69,8 +85,12 @@ export default function BlogPost() {
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="text-2xl font-bold text-primary">
-              VetWonder
+            <Link to="/">
+              <img
+                src={logoVetWonder}
+                alt="VetWonder"
+                className="h-12"
+              />
             </Link>
             <nav className="flex gap-6">
               <Link to="/" className="hover:text-primary">Inicio</Link>
@@ -90,9 +110,9 @@ export default function BlogPost() {
         </Link>
 
         <article className="max-w-4xl mx-auto">
-          {post.featured_image_url && (
+          {post.featured_image && (
             <img
-              src={post.featured_image_url}
+              src={post.featured_image}
               alt={post.title}
               className="w-full aspect-video object-cover rounded-lg mb-6"
             />
@@ -118,7 +138,7 @@ export default function BlogPost() {
             <p className="text-xl text-muted-foreground mb-8">{post.excerpt}</p>
           )}
 
-          <div 
+          <div
             className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />

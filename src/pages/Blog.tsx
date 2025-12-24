@@ -3,20 +3,32 @@ import { supabase } from "@/integrations/supabase/client";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { VetChatbot } from "@/components/chat/VetChatbot";
 import { Link } from "react-router-dom";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
 
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  category: string;
+  featured_image: string | null;
+  is_published: boolean;
+  published_at: string | null;
+  created_at: string;
+}
+
 export default function Blog() {
-  const [posts, setPosts] = useState<any[]>([]);
-  const [filteredPosts, setFilteredPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const categories = ["Alerta", "Prevención", "Normativa", "Consejos", "Nutrición"];
+  const categories = ["Salud", "Nutrición", "Consejos", "Noticias", "Prevención"];
 
   useEffect(() => {
     loadPosts();
@@ -29,15 +41,16 @@ export default function Blog() {
   const loadPosts = async () => {
     try {
       const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('published', true)
-        .order('published_at', { ascending: false });
+        .from("blog_posts")
+        .select("*")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false });
 
       if (error) throw error;
       setPosts(data || []);
     } catch (error) {
       console.error("Error cargando blog:", error);
+      setPosts([]);
     } finally {
       setLoading(false);
     }
@@ -67,9 +80,9 @@ export default function Blog() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/">
-              <img 
-                src={logoVetWonder} 
-                alt="VetWonder" 
+              <img
+                src={logoVetWonder}
+                alt="VetWonder"
                 className="h-12"
               />
             </Link>
@@ -122,10 +135,12 @@ export default function Blog() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">Cargando artículos...</div>
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            No se encontraron artículos
+            No se encontraron artículos. ¡Próximamente publicaremos contenido nuevo!
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

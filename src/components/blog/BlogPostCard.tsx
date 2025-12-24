@@ -9,19 +9,20 @@ interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  excerpt?: string;
+  excerpt?: string | null;
   category?: string;
-  published_at?: string;
-  featured_image_url?: string;
+  published_at?: string | null;
+  featured_image?: string | null;
 }
 
 export function BlogPostCard({ post }: { post: BlogPost }) {
   const getCategoryColor = (category?: string) => {
     switch (category) {
-      case 'Alerta': return 'bg-red-500';
+      case 'Salud': return 'bg-red-500';
       case 'Prevención': return 'bg-blue-500';
-      case 'Normativa': return 'bg-purple-500';
+      case 'Nutrición': return 'bg-amber-500';
       case 'Consejos': return 'bg-green-500';
+      case 'Noticias': return 'bg-purple-500';
       default: return 'bg-gray-500';
     }
   };
@@ -30,16 +31,16 @@ export function BlogPostCard({ post }: { post: BlogPost }) {
     <Link to={`/blog/${post.slug}`}>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
         <div className="aspect-video bg-muted relative">
-          {post.featured_image_url ? (
+          {post.featured_image ? (
             <img
-              src={post.featured_image_url}
+              src={post.featured_image}
               alt={post.title}
               loading="lazy"
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-              📰
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-4xl">
+              🐾
             </div>
           )}
           {post.category && (

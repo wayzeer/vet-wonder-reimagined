@@ -6,6 +6,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { NewsManager } from "@/components/admin/NewsManager";
 import { AppointmentsManager } from "@/components/admin/AppointmentsManager";
 import { RemindersManager } from "@/components/admin/RemindersManager";
+import { BlogManager } from "@/components/admin/BlogManager";
 import { Loader2 } from "lucide-react";
 
 const Admin = () => {
@@ -20,7 +21,7 @@ const Admin = () => {
   const checkAdminAccess = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         navigate("/auth");
         return;
@@ -64,13 +65,18 @@ const Admin = () => {
     <AdminLayout>
       <div className="container-custom py-8">
         <h1 className="text-3xl font-bold mb-8">Panel de Administración</h1>
-        
-        <Tabs defaultValue="news" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
+
+        <Tabs defaultValue="blog" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4 max-w-lg">
+            <TabsTrigger value="blog">Blog</TabsTrigger>
             <TabsTrigger value="news">Noticias</TabsTrigger>
             <TabsTrigger value="appointments">Citas</TabsTrigger>
             <TabsTrigger value="reminders">Recordatorios</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="blog">
+            <BlogManager />
+          </TabsContent>
 
           <TabsContent value="news">
             <NewsManager />
