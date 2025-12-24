@@ -14,6 +14,7 @@ import { NewsFeed } from "@/components/news/NewsFeed";
 import { InstagramFeed } from "@/components/instagram/InstagramFeed";
 import { GuestAppointmentDialog } from "@/components/appointments/GuestAppointmentDialog";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { ShelterSection } from "@/components/shelter/ShelterSection";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Index() {
@@ -39,17 +40,17 @@ export default function Index() {
       {/* Navigation */}
       <nav className="bg-card shadow-sm sticky top-0 z-30 backdrop-blur-md bg-card/90">
         <div className="container-custom flex items-center justify-between h-16 md:h-20 px-4">
-          <img 
-            src={logoVetWonder} 
-            alt="VetWonder Moralzarzal" 
-            className="h-12 md:h-16 cursor-pointer" 
+          <img
+            src={logoVetWonder}
+            alt="VetWonder Moralzarzal"
+            className="h-12 md:h-16 cursor-pointer"
             onClick={() => navigate("/")}
           />
-          
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <a 
-              href="tel:918574379" 
+            <a
+              href="tel:918574379"
               className="flex items-center gap-2 text-primary font-semibold hover:text-primary/80 transition-colors"
             >
               <Phone className="h-4 w-4" />
@@ -69,8 +70,8 @@ export default function Index() {
 
           {/* Mobile Navigation */}
           <div className="flex md:hidden items-center gap-3">
-            <a 
-              href="tel:918574379" 
+            <a
+              href="tel:918574379"
               className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary"
             >
               <Phone className="h-5 w-5" />
@@ -83,30 +84,30 @@ export default function Index() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[280px]">
                 <div className="flex flex-col gap-6 mt-8">
-                  <a 
-                    href="/blog" 
+                  <a
+                    href="/blog"
                     className="text-lg font-medium hover:text-primary transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Blog
                   </a>
                   {isAuthenticated ? (
-                    <Button 
+                    <Button
                       onClick={() => {
                         setMobileMenuOpen(false);
                         navigate("/dashboard");
-                      }} 
+                      }}
                       className="bg-primary hover:bg-primary/90 w-full"
                       size="lg"
                     >
                       Mi Área
                     </Button>
                   ) : (
-                    <Button 
+                    <Button
                       onClick={() => {
                         setMobileMenuOpen(false);
                         navigate("/auth");
-                      }} 
+                      }}
                       variant="outline"
                       className="w-full"
                       size="lg"
@@ -115,8 +116,8 @@ export default function Index() {
                     </Button>
                   )}
                   <div className="pt-6 border-t">
-                    <a 
-                      href="tel:918574379" 
+                    <a
+                      href="tel:918574379"
                       className="flex items-center gap-3 text-primary font-semibold"
                     >
                       <Phone className="h-5 w-5" />
@@ -145,7 +146,7 @@ export default function Index() {
             />
           </div>
           {/* Diagonal Gradient Overlay */}
-          <div 
+          <div
             className="absolute inset-0 bg-gradient-to-br from-background via-background/80 to-transparent"
             style={{
               WebkitMaskImage: 'linear-gradient(135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%)',
@@ -168,16 +169,16 @@ export default function Index() {
               Especialistas en medicina preventiva, cirugía y diagnóstico avanzado.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <Button 
+              <Button
                 onClick={() => setGuestDialogOpen(true)}
                 size="lg"
                 className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 w-full sm:w-auto"
               >
                 Pedir Cita Online
               </Button>
-              <Button 
-                onClick={() => navigate("/auth")} 
-                variant="outline" 
+              <Button
+                onClick={() => navigate("/auth")}
+                variant="outline"
                 size="lg"
                 className="border-2 w-full sm:w-auto"
               >
@@ -199,7 +200,7 @@ export default function Index() {
               <p className="text-base md:text-lg text-muted-foreground">Cuidado integral para tu mascota</p>
             </div>
           </ScrollReveal>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <ScrollReveal delay={100}>
               <Card className="hover:shadow-lg transition-all hover:-translate-y-1 h-full">
@@ -280,7 +281,12 @@ export default function Index() {
         </div>
       </section>
 
-      <SectionDivider variant="curve" className="text-primary bg-muted/30 -mt-12 sm:-mt-16 md:-mt-20" />
+      <SectionDivider variant="curve" className="text-muted/30 bg-muted/30 -mt-12 sm:-mt-16 md:-mt-20" />
+
+      {/* Shelter Collaboration Section */}
+      <ShelterSection />
+
+      <SectionDivider variant="curve" className="text-primary bg-gradient-to-br from-primary/5 to-primary/10 -mt-12 sm:-mt-16 md:-mt-20" />
 
       {/* Contact Section with Map */}
       <section className="py-12 md:py-16 bg-primary">
@@ -293,44 +299,44 @@ export default function Index() {
           <div className="grid md:grid-cols-2 gap-6 md:gap-8">
             <ScrollReveal delay={100}>
               <div className="space-y-6 text-white mx-auto max-w-md">
-              <div className="flex flex-col items-center text-center gap-3">
-                <MapPin className="h-6 w-6" />
-                <div>
-                  <h3 className="font-semibold mb-2">Dirección</h3>
-                  <p className="text-white/90">
-                    C. Capellanía, 25, Local 3<br />
-                    28411 Moralzarzal, Madrid
-                  </p>
+                <div className="flex flex-col items-center text-center gap-3">
+                  <MapPin className="h-6 w-6" />
+                  <div>
+                    <h3 className="font-semibold mb-2">Dirección</h3>
+                    <p className="text-white/90">
+                      C. Capellanía, 25, Local 3<br />
+                      28411 Moralzarzal, Madrid
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-center text-center gap-3">
-                <Phone className="h-6 w-6" />
-                <div>
-                  <h3 className="font-semibold mb-2">Teléfono</h3>
-                  <a href="tel:+34918574379" className="text-white/90 hover:text-white">
-                    +34 918 57 43 79
-                  </a>
+                <div className="flex flex-col items-center text-center gap-3">
+                  <Phone className="h-6 w-6" />
+                  <div>
+                    <h3 className="font-semibold mb-2">Teléfono</h3>
+                    <a href="tel:+34918574379" className="text-white/90 hover:text-white">
+                      +34 918 57 43 79
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-center text-center gap-3">
-                <Mail className="h-6 w-6" />
-                <div>
-                  <h3 className="font-semibold mb-2">Email</h3>
-                  <a href="mailto:info@vetwonder.es" className="text-white/90 hover:text-white">
-                    info@vetwonder.es
-                  </a>
+                <div className="flex flex-col items-center text-center gap-3">
+                  <Mail className="h-6 w-6" />
+                  <div>
+                    <h3 className="font-semibold mb-2">Email</h3>
+                    <a href="mailto:info@vetwonder.es" className="text-white/90 hover:text-white">
+                      info@vetwonder.es
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-center text-center gap-3">
-                <Calendar className="h-6 w-6" />
-                <div>
-                  <h3 className="font-semibold mb-2">Horario</h3>
-                  <p className="text-white/90">
-                    Lunes a Viernes: 10:00 - 14:00 / 17:00 - 20:00<br />
-                    Sábados: 10:00 - 14:00
-                  </p>
+                <div className="flex flex-col items-center text-center gap-3">
+                  <Calendar className="h-6 w-6" />
+                  <div>
+                    <h3 className="font-semibold mb-2">Horario</h3>
+                    <p className="text-white/90">
+                      Lunes a Viernes: 10:00 - 14:00 / 17:00 - 20:00<br />
+                      Sábados: 10:00 - 14:00
+                    </p>
+                  </div>
                 </div>
-              </div>
               </div>
             </ScrollReveal>
 

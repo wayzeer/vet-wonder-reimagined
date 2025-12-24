@@ -1,11 +1,8 @@
-import { Card } from "@/components/ui/card";
 import { useEffect } from "react";
 
 export function InstagramFeed() {
-  // ⚠️ IMPORTANT: Replace with your actual Elfsight widget ID
-  // Get it from: https://elfsight.com (after creating Instagram Feed widget)
-  // Example: "elfsight-app-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-  const elfsightWidgetId = "elfsight-app-9f5f14e1-99fc-4c05-9ac1-4e812881fd3b"; // 👈 REPLACE THIS
+  // Elfsight Instagram Feed widget for VetWonder clinic
+  const elfsightWidgetId = "elfsight-app-9f5f14e1-99fc-4c05-9ac1-4e812881fd3b";
 
   useEffect(() => {
     // Load Elfsight script dynamically
@@ -31,9 +28,9 @@ export function InstagramFeed() {
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">Adopta un compañero de vida</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">Síguenos en redes sociales</h2>
         <p className="text-lg text-muted-foreground">
-          Conoce a los animales que buscan hogar en La Huella de Wonder
+          Consejos, casos clínicos y mucho más en nuestro Instagram
         </p>
       </div>
 
