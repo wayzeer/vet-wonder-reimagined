@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useRateLimit } from "@/hooks/useRateLimit";
 import { useHoneypot } from "@/hooks/useHoneypot";
 import { logSecurityEvent } from "@/lib/security-logger";
+import {
+  isClinicClosed,
+  getAvailableTimeSlotsForDate,
+  getClosureReason,
+  isTimeSlotPassed,
+} from "@/lib/businessHours";
 import { z } from "zod";
 import {
   Dialog,
@@ -24,7 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Loader2 } from "lucide-react";
+import { Calendar, Loader2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Validation schema
 const guestAppointmentSchema = z.object({
@@ -73,20 +80,20 @@ export const GuestAppointmentDialog = ({
   const { toast } = useToast();
   const [step, setStep] = useState<"choice" | "guest" | "success">("choice");
   const [loading, setLoading] = useState(false);
-  
+
   // Rate limiting: 3 intentos cada 15 minutos
   const { checkRateLimit, isRateLimited, remainingTime } = useRateLimit({
     maxAttempts: 3,
     windowMs: 15 * 60 * 1000, // 15 minutos
     storageKey: 'guest_appointment_rate_limit',
   });
-  
+
   // Honeypot anti-bot
   const { honeypotField, honeypotValue, setHoneypotValue, checkHoneypot } = useHoneypot({
     fieldName: 'company_website',
     minSubmitTime: 2000,
   });
-  
+
   const [formData, setFormData] = useState({
     guestName: "",
     guestEmail: "",
@@ -99,9 +106,40 @@ export const GuestAppointmentDialog = ({
     notes: "",
   });
 
+  // Compute available time slots based on selected date
+  const availableTimeSlots = useMemo(() => {
+    if (!formData.preferredDate) return [];
+    const date = new Date(formData.preferredDate);
+    const slots = getAvailableTimeSlotsForDate(date);
+
+    // Filter out past slots if selecting today
+    const today = new Date().toISOString().split("T")[0];
+    if (formData.preferredDate === today) {
+      return slots.filter(slot => !isTimeSlotPassed(date, slot));
+    }
+    return slots;
+  }, [formData.preferredDate]);
+
+  // Check if selected date is closed
+  const dateClosureInfo = useMemo(() => {
+    if (!formData.preferredDate) return null;
+    const date = new Date(formData.preferredDate);
+    if (isClinicClosed(date)) {
+      return getClosureReason(date) || "La clínica está cerrada";
+    }
+    return null;
+  }, [formData.preferredDate]);
+
+  // Reset time when date changes
+  useEffect(() => {
+    if (formData.preferredTime && !availableTimeSlots.includes(formData.preferredTime)) {
+      setFormData(prev => ({ ...prev, preferredTime: "" }));
+    }
+  }, [formData.preferredDate, availableTimeSlots]);
+
   const handleGuestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Check honeypot first (silent bot detection)
     const honeypotCheck = checkHoneypot();
     if (honeypotCheck.isBot) {
@@ -113,7 +151,7 @@ export const GuestAppointmentDialog = ({
       setStep("success");
       return;
     }
-    
+
     // Validate form data
     try {
       guestAppointmentSchema.parse(formData);
@@ -127,7 +165,7 @@ export const GuestAppointmentDialog = ({
         return;
       }
     }
-    
+
     // Check rate limit
     if (!checkRateLimit()) {
       await logSecurityEvent('rate_limit_hit', 'guest_appointment');
@@ -138,7 +176,7 @@ export const GuestAppointmentDialog = ({
       });
       return;
     }
-    
+
     setLoading(true);
 
     try {
@@ -249,8 +287,8 @@ export const GuestAppointmentDialog = ({
             </DialogHeader>
             <form onSubmit={handleGuestSubmit} className="space-y-4 pt-4">
               {/* Honeypot field - invisible to humans, filled by bots */}
-              <div 
-                className="absolute left-[-9999px] opacity-0 pointer-events-none" 
+              <div
+                className="absolute left-[-9999px] opacity-0 pointer-events-none"
                 aria-hidden="true"
               >
                 <label htmlFor={honeypotField}>Leave this empty</label>
@@ -264,7 +302,7 @@ export const GuestAppointmentDialog = ({
                   onChange={(e) => setHoneypotValue(e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="guestName">Nombre completo *</Label>
                 <Input
@@ -368,7 +406,7 @@ export const GuestAppointmentDialog = ({
                     required
                     value={formData.preferredDate}
                     onChange={(e) =>
-                      setFormData({ ...formData, preferredDate: e.target.value })
+                      setFormData({ ...formData, preferredDate: e.target.value, preferredTime: "" })
                     }
                     min={new Date().toISOString().split("T")[0]}
                   />
@@ -376,17 +414,50 @@ export const GuestAppointmentDialog = ({
 
                 <div className="space-y-2">
                   <Label htmlFor="preferredTime">Hora *</Label>
-                  <Input
-                    id="preferredTime"
-                    type="time"
+                  <Select
                     required
                     value={formData.preferredTime}
-                    onChange={(e) =>
-                      setFormData({ ...formData, preferredTime: e.target.value })
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, preferredTime: value })
                     }
-                  />
+                    disabled={!formData.preferredDate || dateClosureInfo !== null || availableTimeSlots.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={
+                        !formData.preferredDate ? "Elige fecha primero" :
+                          dateClosureInfo ? "Cerrado" :
+                            availableTimeSlots.length === 0 ? "Sin disponibilidad" :
+                              "Selecciona hora"
+                      } />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableTimeSlots.map((time) => (
+                        <SelectItem key={time} value={time}>
+                          {time}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
+
+              {dateClosureInfo && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    {dateClosureInfo}. Por favor, selecciona otra fecha.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {formData.preferredDate && !dateClosureInfo && availableTimeSlots.length === 0 && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    No hay huecos disponibles para hoy. Por favor, selecciona otra fecha.
+                  </AlertDescription>
+                </Alert>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="notes">Notas/Síntomas</Label>

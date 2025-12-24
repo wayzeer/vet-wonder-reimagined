@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,8 +9,13 @@ import { Loader2 } from "lucide-react";
 export const ProfileForm = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -19,20 +24,17 @@ export const ProfileForm = () => {
 
   const loadProfile = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const { data, error } = await api.getProfile();
+      if (error) throw new Error(error);
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (error) throw error;
-
-      if (data) {
-        setFullName(data.full_name || "");
-        setPhone(data.phone || "");
+      if (data?.profile) {
+        setFormData({
+          name: data.profile.name || "",
+          phone: data.profile.phone || "",
+          address: data.profile.address || "",
+          city: data.profile.city || "",
+          postalCode: data.profile.postalCode || "",
+        });
       }
     } catch (error) {
       console.error("Error loading profile:", error);
@@ -46,19 +48,8 @@ export const ProfileForm = () => {
     setSaving(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          full_name: fullName,
-          phone: phone,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id);
-
-      if (error) throw error;
+      const { error } = await api.updateProfile(formData);
+      if (error) throw new Error(error);
 
       toast({
         title: "Perfil actualizado",
@@ -86,11 +77,11 @@ export const ProfileForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
       <div className="space-y-2">
-        <Label htmlFor="fullName">Nombre completo</Label>
+        <Label htmlFor="name">Nombre completo</Label>
         <Input
-          id="fullName"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          id="name"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           placeholder="Tu nombre completo"
         />
       </div>
@@ -100,10 +91,42 @@ export const ProfileForm = () => {
         <Input
           id="phone"
           type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          value={formData.phone}
+          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           placeholder="651 50 38 27"
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="address">Dirección</Label>
+        <Input
+          id="address"
+          value={formData.address}
+          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+          placeholder="Tu dirección"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="city">Ciudad</Label>
+          <Input
+            id="city"
+            value={formData.city}
+            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+            placeholder="Ciudad"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="postalCode">Código Postal</Label>
+          <Input
+            id="postalCode"
+            value={formData.postalCode}
+            onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+            placeholder="28411"
+          />
+        </div>
       </div>
 
       <Button type="submit" disabled={saving}>

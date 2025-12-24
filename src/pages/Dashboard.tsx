@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { User } from "@supabase/supabase-js";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,37 +11,26 @@ import { AppointmentCalendar } from "@/components/appointments/AppointmentCalend
 import { AppointmentForm } from "@/components/appointments/AppointmentForm";
 import { AppointmentsList } from "@/components/appointments/AppointmentsList";
 import { ProfileForm } from "@/components/profile/ProfileForm";
+import { MedicalHistoryList } from "@/components/medical/MedicalHistoryList";
 import { VetChatbot } from "@/components/chat/VetChatbot";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, logout, isAuthenticated, loading } = useAuth();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [availability, setAvailability] = useState<{
+    availableSlots: string[];
+    closed: boolean;
+  } | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-      setUser(session.user);
-      setLoading(false);
-    });
+    if (!loading && !isAuthenticated) {
+      navigate("/auth");
+    }
+  }, [isAuthenticated, loading, navigate]);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        navigate("/auth");
-      } else {
-        setUser(session.user);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
+  const handleSignOut = () => {
+    logout();
     navigate("/");
   };
 
@@ -54,17 +42,21 @@ export default function Dashboard() {
     );
   }
 
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm sticky top-0 z-30 backdrop-blur-md bg-white/90">
         <div className="container-custom flex items-center justify-between h-20">
-          <img 
-            src={logoVetWonder} 
-            alt="VetWonder Moralzarzal" 
-            className="h-12 cursor-pointer" 
+          <img
+            src={logoVetWonder}
+            alt="VetWonder Moralzarzal"
+            className="h-12 cursor-pointer"
             onClick={() => navigate("/")}
           />
-          
+
           <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-gray-600 hover:text-orange-600">
             <LogOut className="h-4 w-4 mr-2" />
             Cerrar sesión
@@ -75,7 +67,7 @@ export default function Dashboard() {
       <div className="container-custom py-10">
         <div className="mb-10 border-b pb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Hola, {user?.email?.split('@')[0] || 'Usuario'}
+            Hola, {user?.name || user?.email?.split('@')[0] || 'Usuario'}
           </h1>
           <p className="text-gray-600">
             Gestiona tus mascotas, citas y historial médico
@@ -111,8 +103,16 @@ export default function Dashboard() {
                 <h2 className="text-2xl font-bold mb-2">Reservar Nueva Cita</h2>
                 <p className="text-gray-600 mb-6">Selecciona fecha y completa el formulario</p>
                 <div className="grid md:grid-cols-2 gap-6">
-                  <AppointmentCalendar onDateSelect={setSelectedDate} />
-                  <AppointmentForm selectedDate={selectedDate} onSuccess={() => window.location.reload()} />
+                  <AppointmentCalendar
+                    onDateSelect={setSelectedDate}
+                    onAvailabilityLoad={setAvailability}
+                  />
+                  <AppointmentForm
+                    selectedDate={selectedDate}
+                    availableSlots={availability?.availableSlots}
+                    isClosed={availability?.closed}
+                    onSuccess={() => window.location.reload()}
+                  />
                 </div>
               </div>
               <AppointmentsList />
@@ -120,15 +120,7 @@ export default function Dashboard() {
           </TabsContent>
 
           <TabsContent value="records">
-            <Card className="border-gray-200">
-              <CardHeader>
-                <CardTitle className="text-gray-900">Historial Médico</CardTitle>
-                <CardDescription className="text-gray-600">Consulta el historial médico de tus mascotas</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500">El historial médico estará disponible próximamente.</p>
-              </CardContent>
-            </Card>
+            <MedicalHistoryList />
           </TabsContent>
 
           <TabsContent value="payments">

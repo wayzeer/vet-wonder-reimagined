@@ -5,79 +5,68 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api-client";
 import { toast } from "sonner";
-import { Plus, Upload } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export function AddPetDialog({ onPetAdded }: { onPetAdded?: () => void }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     species: "",
     breed: "",
-    gender: "",
-    date_of_birth: "",
+    sex: "",
+    birthDate: "",
     weight: "",
-    microchip_id: "",
     notes: "",
   });
+
+  // Map UI species to API format
+  const speciesMap: Record<string, 'perro' | 'gato' | 'otro'> = {
+    'Perro': 'perro',
+    'Gato': 'gato',
+    'Ave': 'otro',
+    'Reptil': 'otro',
+    'Roedor': 'otro',
+    'Otro': 'otro',
+  };
+
+  // Map UI sex to API format
+  const sexMap: Record<string, 'macho' | 'hembra' | 'desconocido'> = {
+    'Macho': 'macho',
+    'Hembra': 'hembra',
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No autenticado");
-
-      let photoUrl = null;
-
-      if (photoFile) {
-        const fileExt = photoFile.name.split('.').pop();
-        const fileName = `${user.id}/${Math.random()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage
-          .from('pet-photos')
-          .upload(fileName, photoFile);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('pet-photos')
-          .getPublicUrl(fileName);
-        
-        photoUrl = publicUrl;
-      }
-
-      const { error } = await supabase.from('pets').insert({
-        owner_id: user.id,
+      const { data, error } = await api.createPet({
         name: formData.name,
-        species: formData.species,
-        breed: formData.breed || null,
-        gender: formData.gender || null,
-        date_of_birth: formData.date_of_birth || null,
-        weight: formData.weight ? parseFloat(formData.weight) : null,
-        microchip_id: formData.microchip_id || null,
-        notes: formData.notes || null,
-        photo_url: photoUrl,
+        species: speciesMap[formData.species] || 'otro',
+        breed: formData.breed || undefined,
+        color: undefined,
+        sex: formData.sex ? sexMap[formData.sex] : undefined,
+        birthDate: formData.birthDate || undefined,
+        weight: formData.weight ? parseFloat(formData.weight) : undefined,
+        notes: formData.notes || undefined,
       });
 
-      if (error) throw error;
+      if (error) throw new Error(error);
 
-      toast.success("¡Mascota añadida con éxito!");
+      toast.success("Mascota añadida con éxito!");
       setOpen(false);
       setFormData({
         name: "",
         species: "",
         breed: "",
-        gender: "",
-        date_of_birth: "",
+        sex: "",
+        birthDate: "",
         weight: "",
-        microchip_id: "",
         notes: "",
       });
-      setPhotoFile(null);
       onPetAdded?.();
     } catch (error: any) {
       toast.error(error.message || "Error al añadir mascota");
@@ -99,20 +88,6 @@ export function AddPetDialog({ onPetAdded }: { onPetAdded?: () => void }) {
           <DialogTitle>Añadir Nueva Mascota</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="photo">Foto de la mascota</Label>
-            <div className="mt-2 flex items-center gap-4">
-              <Input
-                id="photo"
-                type="file"
-                accept="image/*"
-                onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
-                className="flex-1"
-              />
-              <Upload className="h-5 w-5 text-muted-foreground" />
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="name">Nombre *</Label>
@@ -158,10 +133,10 @@ export function AddPetDialog({ onPetAdded }: { onPetAdded?: () => void }) {
             </div>
 
             <div>
-              <Label htmlFor="gender">Sexo</Label>
+              <Label htmlFor="sex">Sexo</Label>
               <Select
-                value={formData.gender}
-                onValueChange={(value) => setFormData({ ...formData, gender: value })}
+                value={formData.sex}
+                onValueChange={(value) => setFormData({ ...formData, sex: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona sexo" />
@@ -176,12 +151,12 @@ export function AddPetDialog({ onPetAdded }: { onPetAdded?: () => void }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="date_of_birth">Fecha de nacimiento</Label>
+              <Label htmlFor="birthDate">Fecha de nacimiento</Label>
               <Input
-                id="date_of_birth"
+                id="birthDate"
                 type="date"
-                value={formData.date_of_birth}
-                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                value={formData.birthDate}
+                onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
               />
             </div>
 
@@ -196,16 +171,6 @@ export function AddPetDialog({ onPetAdded }: { onPetAdded?: () => void }) {
                 placeholder="Ej: 15.5"
               />
             </div>
-          </div>
-
-          <div>
-            <Label htmlFor="microchip_id">Número de microchip</Label>
-            <Input
-              id="microchip_id"
-              value={formData.microchip_id}
-              onChange={(e) => setFormData({ ...formData, microchip_id: e.target.value })}
-              placeholder="Ej: 123456789012345"
-            />
           </div>
 
           <div>

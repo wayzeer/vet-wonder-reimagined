@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api-client";
 import { PetCard } from "./PetCard";
 import { AddPetDialog } from "./AddPetDialog";
 import { Loader2 } from "lucide-react";
@@ -10,17 +10,9 @@ export function PetsList() {
 
   const loadPets = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('pets')
-        .select('*')
-        .eq('owner_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setPets(data || []);
+      const { data, error } = await api.getPets();
+      if (error) throw new Error(error);
+      setPets(data?.pets || []);
     } catch (error: any) {
       console.error("Error cargando mascotas:", error);
     } finally {

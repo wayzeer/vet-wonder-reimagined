@@ -1,10 +1,32 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Mail, MapPin, Phone, Clock } from "lucide-react";
+import { Facebook, Instagram, Mail, MapPin, Phone, Clock, Heart, ExternalLink } from "lucide-react";
 
 export const Footer = () => {
   return (
     <footer className="bg-[hsl(var(--footer-bg))] text-[hsl(var(--footer-foreground))] py-12">
       <div className="container mx-auto px-4">
+        {/* Solidarity Banner */}
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-8 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Heart className="h-5 w-5 text-primary fill-primary" />
+            <span className="font-semibold text-primary">Clínica Veterinaria Solidaria</span>
+            <Heart className="h-5 w-5 text-primary fill-primary" />
+          </div>
+          <p className="text-sm opacity-90 mb-3">
+            VetWonder colabora activamente con <strong>La Huella de Wonder</strong>, protectora de animales en Collado Mediano (Madrid).
+            Parte de nuestros ingresos se destinan al cuidado de animales abandonados.
+          </p>
+          <a
+            href="https://www.lahuelladewonder.es/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors text-sm font-medium"
+          >
+            Conoce La Huella de Wonder
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo y descripción */}
           <div className="col-span-1">
@@ -13,10 +35,10 @@ export const Footer = () => {
               Clínica veterinaria en Moralzarzal dedicada al cuidado integral de tu mascota.
             </p>
             <div className="flex gap-4">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <a href="https://www.instagram.com/lahuelladewonder/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <a href="https://www.facebook.com/lahuelladewonder" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
             </div>
@@ -49,15 +71,37 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Servicios */}
+          {/* La Huella de Wonder */}
           <div>
-            <h4 className="font-semibold mb-4">Servicios</h4>
-            <ul className="space-y-2 text-sm opacity-80">
-              <li>Medicina Preventiva</li>
-              <li>Cirugía</li>
-              <li>Urgencias</li>
-              <li>Vacunación</li>
-              <li>Peluquería</li>
+            <h4 className="font-semibold mb-4 flex items-center gap-2">
+              <Heart className="h-4 w-4 text-primary" />
+              La Huella de Wonder
+            </h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a href="https://www.lahuelladewonder.es/adoptar/" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:text-primary transition-colors flex items-center gap-1">
+                  Adopta un animal
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </li>
+              <li>
+                <a href="https://www.lahuelladewonder.es/ayudar-protectora-animales/" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:text-primary transition-colors flex items-center gap-1">
+                  Cómo ayudar
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </li>
+              <li>
+                <a href="https://www.teaming.net/lahuelladewonder" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:text-primary transition-colors flex items-center gap-1">
+                  Teaming (1€/mes)
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </li>
+              <li>
+                <a href="https://www.lahuelladewonder.es/" target="_blank" rel="noopener noreferrer" className="opacity-80 hover:text-primary transition-colors flex items-center gap-1">
+                  Web de la protectora
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -93,12 +137,12 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm opacity-70">
-          <p>© 2024 VetWonder. Todos los derechos reservados.</p>
+          <p>© 2024 VetWonder - Clínica Veterinaria Solidaria con La Huella de Wonder. Todos los derechos reservados.</p>
           <p className="mt-2">
             Web por{" "}
-            <a 
-              href="https://autonomio.es" 
-              target="_blank" 
+            <a
+              href="https://autonomio.es"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,27 +12,34 @@ import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Auth() {
   const navigate = useNavigate();
+  const { login, register, isAuthenticated, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, authLoading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const result = await login(email, password);
 
-      if (error) throw error;
-      
-      toast.success("¡Bienvenido de nuevo!");
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
+      toast.success("Bienvenido de nuevo!");
       navigate("/dashboard");
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error.message || "Error al iniciar sesión");
     } finally {
       setLoading(false);
     }
@@ -43,35 +50,36 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            full_name: fullName,
-          },
-        },
-      });
+      const result = await register(email, password, fullName, phone || undefined);
 
-      if (error) throw error;
-      
-      toast.success("¡Cuenta creada! Por favor revisa tu correo.");
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
+      toast.success("Cuenta creada con éxito!");
       navigate("/dashboard");
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error.message || "Error al crear cuenta");
     } finally {
       setLoading(false);
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md border-gray-200 shadow-xl">
         <CardHeader className="space-y-1 text-center">
-          <img 
-            src={logoVetWonder} 
-            alt="VetWonder" 
+          <img
+            src={logoVetWonder}
+            alt="VetWonder"
             className="h-16 mx-auto mb-4"
           />
           <CardTitle className="text-3xl font-bold text-gray-900">
@@ -87,7 +95,7 @@ export default function Auth() {
               <TabsTrigger value="signin" className="data-[state=active]:bg-white">Iniciar sesión</TabsTrigger>
               <TabsTrigger value="signup" className="data-[state=active]:bg-white">Registrarse</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
@@ -124,7 +132,7 @@ export default function Auth() {
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
@@ -147,6 +155,16 @@ export default function Auth() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-phone">Teléfono (opcional)</Label>
+                  <Input
+                    id="signup-phone"
+                    type="tel"
+                    placeholder="612 345 678"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">

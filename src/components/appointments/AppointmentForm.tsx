@@ -4,46 +4,82 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { Loader2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AppointmentFormProps {
   selectedDate?: Date;
+  availableSlots?: string[];
+  isClosed?: boolean;
   onSuccess?: () => void;
 }
 
-export function AppointmentForm({ selectedDate, onSuccess }: AppointmentFormProps) {
+// Map UI type to API type
+const typeMap: Record<string, 'consulta' | 'vacunacion' | 'cirugia' | 'revision' | 'urgencia' | 'otro'> = {
+  'Consulta general': 'consulta',
+  'Vacunación': 'vacunacion',
+  'Revisión': 'revision',
+  'Urgencia': 'urgencia',
+  'Cirugía': 'cirugia',
+  'Peluquería': 'otro',
+};
+
+export function AppointmentForm({ selectedDate, availableSlots, isClosed, onSuccess }: AppointmentFormProps) {
   const [pets, setPets] = useState<any[]>([]);
-  const [clinics, setClinics] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [slots, setSlots] = useState<string[]>([]);
   const [formData, setFormData] = useState({
-    pet_id: "",
-    clinic_id: "",
-    appointment_type: "",
+    animalId: "",
+    appointmentType: "",
     time: "",
     notes: "",
   });
 
   useEffect(() => {
-    loadData();
+    loadPets();
   }, []);
 
-  const loadData = async () => {
+  // Update slots when availableSlots prop changes or when date changes
+  useEffect(() => {
+    if (availableSlots !== undefined) {
+      setSlots(availableSlots);
+      // Reset time selection if current time is no longer available
+      if (formData.time && !availableSlots.includes(formData.time)) {
+        setFormData(prev => ({ ...prev, time: "" }));
+      }
+    } else if (selectedDate) {
+      // Fetch slots if not provided via prop
+      loadSlotsForDate(selectedDate);
+    }
+  }, [availableSlots, selectedDate]);
+
+  const loadPets = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const [petsResponse, clinicsResponse] = await Promise.all([
-        supabase.from('pets').select('*').eq('owner_id', user.id),
-        supabase.from('clinics').select('*'),
-      ]);
-
-      if (petsResponse.data) setPets(petsResponse.data);
-      if (clinicsResponse.data) setClinics(clinicsResponse.data);
+      const { data, error } = await api.getPets();
+      if (error) throw new Error(error);
+      setPets(data?.pets || []);
     } catch (error) {
-      console.error("Error cargando datos:", error);
+      console.error("Error cargando mascotas:", error);
+    }
+  };
+
+  const loadSlotsForDate = async (date: Date) => {
+    setLoadingSlots(true);
+    try {
+      const dateStr = date.toISOString().split("T")[0];
+      const { data, error } = await api.getAvailability(dateStr);
+      if (error) throw new Error(error);
+      setSlots(data?.availableSlots || []);
+    } catch (error) {
+      console.error("Error cargando disponibilidad:", error);
+      setSlots([]);
+    } finally {
+      setLoadingSlots(false);
     }
   };
 
@@ -54,32 +90,30 @@ export function AppointmentForm({ selectedDate, onSuccess }: AppointmentFormProp
       return;
     }
 
+    if (!formData.time) {
+      toast.error("Por favor, selecciona una hora");
+      return;
+    }
+
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No autenticado");
-
       const [hours, minutes] = formData.time.split(':');
       const appointmentDate = new Date(selectedDate);
-      appointmentDate.setHours(parseInt(hours), parseInt(minutes));
+      appointmentDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-      const { error } = await supabase.from('appointments').insert({
-        client_id: user.id,
-        pet_id: formData.pet_id,
-        clinic_id: formData.clinic_id,
-        appointment_type: formData.appointment_type,
-        appointment_date: appointmentDate.toISOString(),
-        notes: formData.notes || null,
-        status: 'pending',
+      const { data, error } = await api.createAppointment({
+        animalId: formData.animalId,
+        scheduledAt: appointmentDate.toISOString(),
+        type: typeMap[formData.appointmentType] || 'consulta',
+        notes: formData.notes || undefined,
       });
 
-      if (error) throw error;
+      if (error) throw new Error(error);
 
-      toast.success("¡Cita reservada con éxito! Te confirmaremos por email");
+      toast.success("¡Cita solicitada con éxito! Te confirmaremos pronto.");
       setFormData({
-        pet_id: "",
-        clinic_id: "",
-        appointment_type: "",
+        animalId: "",
+        appointmentType: "",
         time: "",
         notes: "",
       });
@@ -91,11 +125,16 @@ export function AppointmentForm({ selectedDate, onSuccess }: AppointmentFormProp
     }
   };
 
-  const timeSlots = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "12:00", "12:30", "16:00", "16:30", "17:00", "17:30",
-    "18:00", "18:30", "19:00", "19:30"
-  ];
+  // Map species for display
+  const speciesDisplay: Record<string, string> = {
+    'perro': 'Perro',
+    'gato': 'Gato',
+    'otro': 'Otro',
+  };
+
+  const isDateClosed = isClosed || false;
+  const hasAvailableSlots = slots.length > 0;
+  const canSubmit = selectedDate && !isDateClosed && hasAvailableSlots && pets.length > 0;
 
   return (
     <Card>
@@ -112,12 +151,30 @@ export function AppointmentForm({ selectedDate, onSuccess }: AppointmentFormProp
             </div>
           )}
 
+          {isDateClosed && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                La clínica está cerrada en esta fecha. Por favor selecciona otro día.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {!isDateClosed && selectedDate && !hasAvailableSlots && !loadingSlots && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                No hay huecos disponibles para esta fecha. Por favor selecciona otro día.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div>
             <Label htmlFor="pet">Mascota *</Label>
             <Select
-              value={formData.pet_id}
-              onValueChange={(value) => setFormData({ ...formData, pet_id: value })}
-              required
+              value={formData.animalId}
+              onValueChange={(value) => setFormData({ ...formData, animalId: value })}
+              disabled={!canSubmit}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona tu mascota" />
@@ -125,39 +182,24 @@ export function AppointmentForm({ selectedDate, onSuccess }: AppointmentFormProp
               <SelectContent>
                 {pets.map((pet) => (
                   <SelectItem key={pet.id} value={pet.id}>
-                    {pet.name} ({pet.species})
+                    {pet.name} ({speciesDisplay[pet.species] || pet.species})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="clinic">Clínica *</Label>
-            <Select
-              value={formData.clinic_id}
-              onValueChange={(value) => setFormData({ ...formData, clinic_id: value })}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecciona clínica" />
-              </SelectTrigger>
-              <SelectContent>
-                {clinics.map((clinic) => (
-                  <SelectItem key={clinic.id} value={clinic.id}>
-                    {clinic.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {pets.length === 0 && (
+              <p className="text-sm text-muted-foreground mt-1">
+                No tienes mascotas registradas. Añade una primero.
+              </p>
+            )}
           </div>
 
           <div>
             <Label htmlFor="type">Tipo de consulta *</Label>
             <Select
-              value={formData.appointment_type}
-              onValueChange={(value) => setFormData({ ...formData, appointment_type: value })}
-              required
+              value={formData.appointmentType}
+              onValueChange={(value) => setFormData({ ...formData, appointmentType: value })}
+              disabled={!canSubmit}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona tipo" />
@@ -174,23 +216,35 @@ export function AppointmentForm({ selectedDate, onSuccess }: AppointmentFormProp
           </div>
 
           <div>
-            <Label htmlFor="time">Hora *</Label>
+            <Label htmlFor="time">
+              Hora disponible *
+              {loadingSlots && <Loader2 className="inline ml-2 h-3 w-3 animate-spin" />}
+            </Label>
             <Select
               value={formData.time}
               onValueChange={(value) => setFormData({ ...formData, time: value })}
-              required
+              disabled={!canSubmit || loadingSlots}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecciona hora" />
+                <SelectValue placeholder={
+                  loadingSlots ? "Cargando..." :
+                  !hasAvailableSlots ? "Sin disponibilidad" :
+                  "Selecciona hora"
+                } />
               </SelectTrigger>
               <SelectContent>
-                {timeSlots.map((time) => (
+                {slots.map((time) => (
                   <SelectItem key={time} value={time}>
                     {time}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {hasAvailableSlots && (
+              <p className="text-xs text-muted-foreground mt-1">
+                {slots.length} huecos disponibles
+              </p>
+            )}
           </div>
 
           <div>
@@ -201,11 +255,23 @@ export function AppointmentForm({ selectedDate, onSuccess }: AppointmentFormProp
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Describe brevemente el motivo de la consulta..."
               rows={3}
+              disabled={!canSubmit}
             />
           </div>
 
-          <Button type="submit" disabled={loading || !selectedDate} className="w-full">
-            {loading ? "Reservando..." : "Confirmar Cita"}
+          <Button
+            type="submit"
+            disabled={loading || !canSubmit || !formData.animalId || !formData.appointmentType || !formData.time}
+            className="w-full"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Reservando...
+              </>
+            ) : (
+              "Solicitar Cita"
+            )}
           </Button>
         </form>
       </CardContent>
