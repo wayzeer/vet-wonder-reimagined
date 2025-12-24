@@ -51,10 +51,10 @@ export default async function handler(req: Request) {
             });
         }
 
-        const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
+        const LOVABLE_API_KEY = process.env.OPEN_API_KEY || process.env.LOVABLE_API_KEY;
 
         if (!LOVABLE_API_KEY) {
-            throw new Error('LOVABLE_API_KEY no está configurada');
+            throw new Error('OPEN_API_KEY no está configurada');
         }
 
         const userPrompt = `Genera un artículo de blog sobre el siguiente tema: "${topic}"
