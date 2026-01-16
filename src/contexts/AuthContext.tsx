@@ -13,6 +13,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (email: string, password: string, name: string, phone?: string) => Promise<{ success: boolean; error?: string }>;
+  googleLogin: (credential: string) => Promise<{ success: boolean; error?: string; isNewUser?: boolean }>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -85,6 +86,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { success: true };
   };
 
+  const googleLogin = async (credential: string) => {
+    const { data, error } = await api.googleAuth(credential);
+
+    if (error || !data) {
+      return { success: false, error: error || 'Error al iniciar sesión con Google' };
+    }
+
+    localStorage.setItem('portal_token', data.token);
+    setUser({
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.name,
+      type: data.user.type || 'cliente',
+    });
+
+    return { success: true, isNewUser: data.isNewUser };
+  };
+
   const logout = () => {
     localStorage.removeItem('portal_token');
     setUser(null);
@@ -97,6 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         login,
         register,
+        googleLogin,
         logout,
         isAuthenticated: !!user,
       }}

@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { PawPrint, Calendar, Heart, Activity, MapPin, Phone, Mail, Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { PawPrint, Calendar, Heart, Activity, MapPin, Phone, Mail, Menu, Clock } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
@@ -15,25 +15,15 @@ import { InstagramFeed } from "@/components/instagram/InstagramFeed";
 import { GuestAppointmentDialog } from "@/components/appointments/GuestAppointmentDialog";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { ShelterSection } from "@/components/shelter/ShelterSection";
+import { HeroVideo } from "@/components/video/HeroVideo";
+import { CLINICS, PRIMARY_PHONE, PRIMARY_EMAIL } from "@/data/clinics";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Index() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated } = useAuth();
   const [guestDialogOpen, setGuestDialogOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAuthenticated(!!session);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -42,7 +32,7 @@ export default function Index() {
         <div className="container-custom flex items-center justify-between h-16 md:h-20 px-4">
           <img
             src={logoVetWonder}
-            alt="VetWonder Moralzarzal"
+            alt="VetWonder - Clínicas Veterinarias"
             className="h-12 md:h-16 cursor-pointer"
             onClick={() => navigate("/")}
           />
@@ -133,33 +123,14 @@ export default function Index() {
 
       {/* Hero Section with Video Background */}
       <section className="relative overflow-hidden min-h-[500px] md:min-h-[600px] flex items-center">
-        {/* Video Background - optimizado para móvil */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          {/* Contenedor extra para recortar la UI de YouTube en móvil */}
-          <div className="absolute inset-[-100px] md:inset-0 overflow-hidden">
-            <iframe
-              className="absolute top-1/2 left-1/2 w-[200%] h-[200%] md:w-[150%] md:h-[150%] -translate-x-1/2 -translate-y-1/2 scale-[1.2] md:scale-[1.3]"
-              src="https://www.youtube.com/embed/iucW5evsuLE?autoplay=1&mute=1&loop=1&playlist=iucW5evsuLE&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&start=60&playsinline=1&disablekb=1&fs=0"
-              title="Happy video background"
-              allow="autoplay; encrypted-media"
-              style={{ pointerEvents: 'none', border: 'none' }}
-            />
-          </div>
-          {/* Diagonal Gradient Overlay */}
-          <div
-            className="absolute inset-0 bg-gradient-to-br from-background via-background/80 to-transparent"
-            style={{
-              WebkitMaskImage: 'linear-gradient(135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%)',
-              maskImage: 'linear-gradient(135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%)',
-            }}
-          />
-        </div>
+        {/* Video Background - optimizado con carga diferida y posición aleatoria */}
+        <HeroVideo />
 
         {/* Content */}
         <div className="container-custom relative z-10 py-12 md:py-20 px-4">
           <div className="max-w-2xl">
             <span className="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3 md:mb-4 animate-fade-in">
-              Veterinaria en Moralzarzal
+              Clínicas Veterinarias en la Sierra de Madrid
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 md:mb-6 animate-fade-in leading-tight" style={{ animationDelay: '0.1s' }}>
               <span className="block">Salud animal con</span>
@@ -292,61 +263,60 @@ export default function Index() {
       <section className="py-12 md:py-16 bg-primary">
         <div className="container-custom px-4">
           <ScrollReveal>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-12 text-white text-center">
-              Visítanos
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white text-center">
+              Nuestras Clínicas
             </h2>
+            <p className="text-white/80 text-center mb-8 md:mb-12">
+              Dos ubicaciones para estar más cerca de ti
+            </p>
           </ScrollReveal>
-          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-            <ScrollReveal delay={100}>
-              <div className="space-y-6 text-white mx-auto max-w-md">
-                <div className="flex flex-col items-center text-center gap-3">
-                  <MapPin className="h-6 w-6" />
-                  <div>
-                    <h3 className="font-semibold mb-2">Dirección</h3>
-                    <p className="text-white/90">
-                      C. Capellanía, 25, Local 3<br />
-                      28411 Moralzarzal, Madrid
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-center text-center gap-3">
-                  <Phone className="h-6 w-6" />
-                  <div>
-                    <h3 className="font-semibold mb-2">Teléfono</h3>
-                    <a href="tel:+34918574379" className="text-white/90 hover:text-white">
-                      +34 918 57 43 79
-                    </a>
-                  </div>
-                </div>
-                <div className="flex flex-col items-center text-center gap-3">
-                  <Mail className="h-6 w-6" />
-                  <div>
-                    <h3 className="font-semibold mb-2">Email</h3>
-                    <a href="mailto:info@vetwonder.es" className="text-white/90 hover:text-white">
-                      info@vetwonder.es
-                    </a>
-                  </div>
-                </div>
-                <div className="flex flex-col items-center text-center gap-3">
-                  <Calendar className="h-6 w-6" />
-                  <div>
-                    <h3 className="font-semibold mb-2">Horario</h3>
-                    <p className="text-white/90">
-                      Lunes a Viernes: 10:00 - 14:00 / 17:00 - 20:00<br />
-                      Sábados: 10:00 - 14:00
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
 
-            {/* Map */}
-            <ScrollReveal delay={200}>
-              <div>
-                <ClinicMap />
-              </div>
-            </ScrollReveal>
+          {/* Clinic Cards */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            {CLINICS.map((clinic, index) => (
+              <ScrollReveal key={clinic.id} delay={100 * (index + 1)}>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-white/80" />
+                    {clinic.shortName}
+                  </h3>
+                  <div className="space-y-3 text-white/90">
+                    <p className="text-sm">
+                      {clinic.address.street}<br />
+                      {clinic.address.postalCode} {clinic.address.city}
+                    </p>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-white/60" />
+                      <span>L-V: {clinic.hours.weekdays}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-white/60" />
+                      <span>Sáb: {clinic.hours.saturday}</span>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
+
+          {/* Shared Contact Info */}
+          <ScrollReveal delay={300}>
+            <div className="flex flex-wrap justify-center gap-8 mb-8 text-white">
+              <a href={`tel:+34${PRIMARY_PHONE.replace(/\s/g, '')}`} className="flex items-center gap-2 hover:text-white/80 transition-colors">
+                <Phone className="h-5 w-5" />
+                <span className="font-semibold">{PRIMARY_PHONE}</span>
+              </a>
+              <a href={`mailto:${PRIMARY_EMAIL}`} className="flex items-center gap-2 hover:text-white/80 transition-colors">
+                <Mail className="h-5 w-5" />
+                <span>{PRIMARY_EMAIL}</span>
+              </a>
+            </div>
+          </ScrollReveal>
+
+          {/* Map with clinic selector */}
+          <ScrollReveal delay={400}>
+            <ClinicMap />
+          </ScrollReveal>
         </div>
       </section>
 

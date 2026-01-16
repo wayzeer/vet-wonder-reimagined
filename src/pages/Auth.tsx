@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,7 @@ import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { login, register, isAuthenticated, loading: authLoading } = useAuth();
+  const { login, register, googleLogin, isAuthenticated, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +25,28 @@ export default function Auth() {
       navigate("/dashboard");
     }
   }, [isAuthenticated, authLoading, navigate]);
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setLoading(true);
+    try {
+      const result = await googleLogin(credentialResponse.credential);
+
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
+      if (result.isNewUser) {
+        toast.success("Cuenta creada con Google!");
+      } else {
+        toast.success("Bienvenido de nuevo!");
+      }
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Error al iniciar sesion con Google");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +122,7 @@ export default function Auth() {
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Correo electrónico</Label>
+                  <Label htmlFor="email">Correo electronico</Label>
                   <Input
                     id="email"
                     type="email"
@@ -110,11 +133,11 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Contraseña</Label>
+                  <Label htmlFor="password">Contrasena</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Tu contraseña"
+                    placeholder="Tu contrasena"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -124,12 +147,32 @@ export default function Auth() {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Iniciando sesión...
+                      Iniciando sesion...
                     </>
                   ) : (
-                    "Iniciar sesión"
+                    "Iniciar sesion"
                   )}
                 </Button>
+
+                <div className="relative my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-gray-500">O continuar con</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => toast.error("Error al iniciar sesion con Google")}
+                    text="signin_with"
+                    shape="rectangular"
+                    locale="es"
+                    width="100%"
+                  />
+                </div>
               </form>
             </TabsContent>
 
@@ -189,6 +232,26 @@ export default function Auth() {
                     "Registrarse"
                   )}
                 </Button>
+
+                <div className="relative my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-gray-500">O registrarse con</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => toast.error("Error al registrarse con Google")}
+                    text="signup_with"
+                    shape="rectangular"
+                    locale="es"
+                    width="100%"
+                  />
+                </div>
               </form>
             </TabsContent>
           </Tabs>
