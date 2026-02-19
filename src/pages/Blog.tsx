@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api-client";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2 } from "lucide-react";
-import { VetChatbot } from "@/components/chat/VetChatbot";
+import { Search, Loader2, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
 
@@ -13,12 +12,12 @@ interface BlogPost {
   title: string;
   slug: string;
   excerpt: string | null;
-  content: string;
-  category: string;
+  content?: string;
+  category: string | null;
   featured_image: string | null;
   is_published: boolean;
   published_at: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export default function Blog() {
@@ -40,14 +39,10 @@ export default function Blog() {
 
   const loadPosts = async () => {
     try {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("is_published", true)
-        .order("published_at", { ascending: false });
+      const { data, error } = await api.getPublicBlogPosts({ limit: 50 });
 
-      if (error) throw error;
-      setPosts(data || []);
+      if (error) throw new Error(error);
+      setPosts(data?.data || []);
     } catch (error) {
       console.error("Error cargando blog:", error);
       setPosts([]);
@@ -68,7 +63,7 @@ export default function Blog() {
     }
 
     if (selectedCategory) {
-      filtered = filtered.filter((post) => post.category === selectedCategory);
+      filtered = filtered.filter((post) => post.category && post.category === selectedCategory);
     }
 
     setFilteredPosts(filtered);
@@ -88,7 +83,7 @@ export default function Blog() {
             </Link>
             <nav className="flex gap-6">
               <Link to="/" className="hover:text-primary">Inicio</Link>
-              <Link to="/auth" className="hover:text-primary">Área Cliente</Link>
+              <a href="tel:918574379" className="hover:text-primary flex items-center gap-1"><Phone className="h-4 w-4" />918 57 43 79</a>
             </nav>
           </div>
         </div>
@@ -150,8 +145,6 @@ export default function Blog() {
           </div>
         )}
       </div>
-
-      <VetChatbot />
     </div>
   );
 }

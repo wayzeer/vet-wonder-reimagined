@@ -430,6 +430,7 @@ export default function Careers() {
                           <Textarea
                             id="experience"
                             required
+                            minLength={10}
                             rows={4}
                             value={formData.experience}
                             onChange={(e) =>
@@ -438,8 +439,13 @@ export default function Careers() {
                                 experience: e.target.value,
                               })
                             }
-                            placeholder="Años de experiencia, tipo de clínicas, especialidades..."
+                            placeholder="Años de experiencia, tipo de clínicas, especialidades... (mín. 10 caracteres)"
                           />
+                          {formData.experience.length > 0 && formData.experience.length < 10 && (
+                            <p className="text-xs text-amber-600">
+                              Mínimo 10 caracteres ({formData.experience.length}/10)
+                            </p>
+                          )}
                         </div>
 
                         <div className="space-y-3">

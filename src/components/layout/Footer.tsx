@@ -38,11 +38,6 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="opacity-80 hover:text-primary transition-colors">
-                  Área Cliente
-                </Link>
-              </li>
-              <li>
                 <Link to="/privacidad" className="opacity-80 hover:text-primary transition-colors">
                   Política de Privacidad
                 </Link>

@@ -43,7 +43,7 @@ export function ShelterSection() {
                             className="gap-2"
                         >
                             <a
-                                href="https://www.lahuelladewonder.es/adoptar/"
+                                href="https://www.lahuelladewonder.es/adopta-salva-2-vidas/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >

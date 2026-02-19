@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api-client";
 import { Calendar, PawPrint } from "lucide-react";
 
 interface NewsItem {
@@ -23,15 +23,10 @@ export function NewsFeed() {
 
   const loadNews = async () => {
     try {
-      const { data, error } = await supabase
-        .from('news')
-        .select('id, title, excerpt, image_url, published_at, category')
-        .eq('published', true)
-        .order('published_at', { ascending: false })
-        .limit(3);
+      const { data, error } = await api.getPublicNews({ limit: 3 });
 
-      if (error) throw error;
-      setNews(data || []);
+      if (error) throw new Error(error);
+      setNews(data?.data || []);
     } catch (error) {
       console.error('Error loading news:', error);
     } finally {

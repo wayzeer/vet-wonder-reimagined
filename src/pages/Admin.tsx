@@ -1,77 +1,72 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { NewsManager } from "@/components/admin/NewsManager";
-import { AppointmentsManager } from "@/components/admin/AppointmentsManager";
-import { RemindersManager } from "@/components/admin/RemindersManager";
 import { BlogManager } from "@/components/admin/BlogManager";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Lock } from "lucide-react";
+
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || "REDACTED_FALLBACK";
 
 const Admin = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    checkAdminAccess();
-  }, []);
-
-  const checkAdminAccess = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        navigate("/auth");
-        return;
-      }
-
-      // Check if user has admin role
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .eq("role", "admin")
-        .single();
-
-      if (!roles) {
-        navigate("/dashboard");
-        return;
-      }
-
-      setIsAdmin(true);
-    } catch (error) {
-      console.error("Error checking admin access:", error);
-      navigate("/dashboard");
-    } finally {
-      setLoading(false);
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      setError("");
+    } else {
+      setError("Contraseña incorrecta");
     }
   };
 
-  if (loading) {
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setPassword("");
+  };
+
+  if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-full max-w-sm p-8 space-y-6">
+          <div className="text-center">
+            <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <Lock className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold">Panel de Administración</h1>
+            <p className="text-muted-foreground mt-2">Introduce la contraseña para acceder</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <Input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoFocus
+            />
+            {error && <p className="text-sm text-destructive">{error}</p>}
+            <Button type="submit" className="w-full">
+              Acceder
+            </Button>
+          </form>
+        </div>
       </div>
     );
   }
 
-  if (!isAdmin) {
-    return null;
-  }
-
   return (
-    <AdminLayout>
+    <AdminLayout onLogout={handleLogout}>
       <div className="container-custom py-8">
         <h1 className="text-3xl font-bold mb-8">Panel de Administración</h1>
 
         <Tabs defaultValue="blog" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-lg">
+          <TabsList className="grid w-full grid-cols-2 max-w-sm">
             <TabsTrigger value="blog">Blog</TabsTrigger>
             <TabsTrigger value="news">Noticias</TabsTrigger>
-            <TabsTrigger value="appointments">Citas</TabsTrigger>
-            <TabsTrigger value="reminders">Recordatorios</TabsTrigger>
           </TabsList>
 
           <TabsContent value="blog">
@@ -80,14 +75,6 @@ const Admin = () => {
 
           <TabsContent value="news">
             <NewsManager />
-          </TabsContent>
-
-          <TabsContent value="appointments">
-            <AppointmentsManager />
-          </TabsContent>
-
-          <TabsContent value="reminders">
-            <RemindersManager />
           </TabsContent>
         </Tabs>
       </div>

@@ -1,20 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut, Home } from "lucide-react";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
+  onLogout: () => void;
 }
 
-export const AdminLayout = ({ children }: AdminLayoutProps) => {
+export const AdminLayout = ({ children, onLogout }: AdminLayoutProps) => {
   const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/");
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -36,12 +31,12 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/")}
             >
               <Home className="h-4 w-4 mr-2" />
-              Dashboard
+              Inicio
             </Button>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
+            <Button variant="outline" size="sm" onClick={onLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               Salir
             </Button>

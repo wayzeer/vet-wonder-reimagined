@@ -1,7 +1,7 @@
-project_id = "REDACTED_PROJECT"
+project_id = "REDACTED_PROJECT_REF"
 
 [functions.chat-veterinario]
-verify_jwt = false
+verify_jwt = true
 
 [functions.pet-advice]
 verify_jwt = true

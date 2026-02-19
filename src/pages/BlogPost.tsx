@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api-client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, ArrowLeft, Phone, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { VetChatbot } from "@/components/chat/VetChatbot";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
 
 interface BlogPostData {
@@ -15,11 +14,11 @@ interface BlogPostData {
   slug: string;
   excerpt: string | null;
   content: string;
-  category: string;
+  category: string | null;
   featured_image: string | null;
   is_published: boolean;
   published_at: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export default function BlogPost() {
@@ -32,16 +31,12 @@ export default function BlogPost() {
   }, [slug]);
 
   const loadPost = async () => {
+    if (!slug) return;
     try {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("slug", slug)
-        .eq("is_published", true)
-        .single();
+      const { data, error } = await api.getPublicBlogPost(slug);
 
-      if (error) throw error;
-      setPost(data);
+      if (error) throw new Error(error);
+      setPost(data || null);
     } catch (error) {
       console.error("Error cargando artículo:", error);
       setPost(null);
@@ -95,7 +90,7 @@ export default function BlogPost() {
             <nav className="flex gap-6">
               <Link to="/" className="hover:text-primary">Inicio</Link>
               <Link to="/blog" className="hover:text-primary">Blog</Link>
-              <Link to="/auth" className="hover:text-primary">Área Cliente</Link>
+              <a href="tel:918574379" className="hover:text-primary flex items-center gap-1"><Phone className="h-4 w-4" />918 57 43 79</a>
             </nav>
           </div>
         </div>
@@ -149,19 +144,16 @@ export default function BlogPost() {
               En VetWonder estamos aquí para ayudarte. Reserva tu cita o llámanos para urgencias.
             </p>
             <div className="flex gap-3">
-              <Link to="/auth">
-                <Button>Reservar Cita Online</Button>
-              </Link>
-              <Button variant="outline" className="gap-2">
-                <Phone className="h-4 w-4" />
-                651 50 38 27
+              <Button asChild>
+                <a href="tel:918574379" className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  Llámanos
+                </a>
               </Button>
             </div>
           </div>
         </article>
       </div>
-
-      <VetChatbot />
     </div>
   );
 }

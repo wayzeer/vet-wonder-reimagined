@@ -1,8 +1,8 @@
 import { useState, useEffect, memo } from 'react';
 
 // Good video segments to start from (in seconds)
-// These are parts of the video with nice visuals
-const VIDEO_START_POINTS = [0, 30, 60, 90, 120, 150, 180];
+// Skip first 35s (intro has weird visuals)
+const VIDEO_START_POINTS = [35, 60, 90, 120, 150, 180];
 
 function getRandomStartPoint(): number {
   const randomIndex = Math.floor(Math.random() * VIDEO_START_POINTS.length);

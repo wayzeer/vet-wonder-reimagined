@@ -2,58 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Playful, friendly fonts - Nunito for rounded, approachable feel */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Poppins:wght@400;500;600;700;800&display=swap');
+
 @layer base {
   :root {
-    /* VetWonder Orange Theme - Moralzarzal */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 15%;
+    /* VetWonder - Playful Orange Palette */
+    --background: 30 50% 98%;
+    --foreground: 20 30% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 15%;
+    --card-foreground: 20 30% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
-    --primary: 24 95% 53%;
+    --popover-foreground: 20 30% 15%;
+
+    /* Vibrant, energetic orange */
+    --primary: 24 95% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 0 0% 15%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 24 95% 60%;
+
+    /* Light peachy cream */
+    --secondary: 30 60% 95%;
+    --secondary-foreground: 20 30% 20%;
+
+    /* Orange-tinted grays for cohesion */
+    --muted: 25 25% 94%;
+    --muted-foreground: 20 15% 40%;
+
+    /* Complementary teal for accents */
+    --accent: 175 60% 40%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
+
+    --destructive: 0 80% 55%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 24 95% 53%;
-    --radius: 0.75rem;
-    
-    /* Dark blue for footer and contrast sections */
-    --footer-bg: 222 47% 11%;
-    --footer-foreground: 210 40% 98%;
+
+    /* Warm borders */
+    --border: 25 20% 88%;
+    --input: 25 20% 88%;
+    --ring: 24 95% 50%;
+    --radius: 1rem;
+
+    /* Deep navy for footer contrast */
+    --footer-bg: 220 40% 13%;
+    --footer-foreground: 30 30% 95%;
+
+    /* Playful accent colors */
+    --orange-light: 30 100% 95%;
+    --orange-medium: 24 95% 60%;
+    --teal: 175 60% 40%;
+    --coral: 15 85% 60%;
   }
 
   .dark {
-    --background: 0 0% 11%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 11%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 11%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 24 95% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 17%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 17%;
-    --muted-foreground: 0 0% 65%;
-    --accent: 24 95% 60%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 30%;
+    --background: 220 25% 10%;
+    --foreground: 30 20% 95%;
+    --card: 220 20% 14%;
+    --card-foreground: 30 20% 95%;
+    --popover: 220 20% 14%;
+    --popover-foreground: 30 20% 95%;
+    --primary: 24 95% 55%;
+    --primary-foreground: 220 25% 10%;
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 30 20% 95%;
+    --muted: 220 15% 20%;
+    --muted-foreground: 25 15% 60%;
+    --accent: 175 55% 45%;
+    --accent-foreground: 220 25% 10%;
+    --destructive: 0 65% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 17%;
-    --input: 0 0% 17%;
-    --ring: 24 95% 53%;
-    
-    --footer-bg: 222 47% 11%;
-    --footer-foreground: 210 40% 98%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 24 95% 55%;
+
+    --footer-bg: 220 30% 8%;
+    --footer-foreground: 30 20% 90%;
   }
 }
 
@@ -61,14 +81,158 @@
   * {
     @apply border-border;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Nunito', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Playful, bold headings */
+  h1, h2, h3, .font-display {
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-weight: 800;
+  }
+
+  /* Smooth focus states */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background rounded-lg;
+  }
+
+  /* Selection color */
+  ::selection {
+    background: hsl(24 95% 50% / 0.3);
   }
 }
 
 @layer components {
   .container-custom {
-    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+    @apply container mx-auto px-5 sm:px-8 lg:px-12;
+    max-width: 1280px;
+  }
+
+  /* Playful section with organic blob shapes */
+  .section-playful {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-playful::before {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: hsl(var(--orange-light));
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    opacity: 0.5;
+    z-index: 0;
+    animation: blob-morph 15s ease-in-out infinite;
+  }
+
+  @keyframes blob-morph {
+    0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    50% { border-radius: 50% 60% 30% 60% / 30% 40% 70% 50%; }
+    75% { border-radius: 40% 30% 60% 50% / 60% 50% 40% 30%; }
+  }
+
+  /* Bouncy button hover - but subtle, not tacky */
+  .btn-playful {
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-playful:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 30px -10px hsl(24 95% 50% / 0.4);
+  }
+
+  .btn-playful:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* Playful card with subtle tilt on hover */
+  .card-playful {
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .card-playful:hover {
+    transform: translateY(-4px) rotate(0.5deg);
+    box-shadow:
+      0 20px 40px -15px hsl(24 95% 50% / 0.15),
+      0 10px 20px -10px hsl(var(--foreground) / 0.05);
+  }
+
+  /* Text balance for better typography */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Playful underline animation */
+  .link-playful {
+    position: relative;
+    display: inline-block;
+  }
+
+  .link-playful::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: hsl(var(--primary));
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .link-playful:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Paw print decorative pattern */
+  .paw-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 35c-3 0-5.5 2.5-5.5 5.5S27 46 30 46s5.5-2.5 5.5-5.5S33 35 30 35zm-8-8c-2 0-3.5 1.5-3.5 3.5S20 34 22 34s3.5-1.5 3.5-3.5S24 27 22 27zm16 0c-2 0-3.5 1.5-3.5 3.5S36 34 38 34s3.5-1.5 3.5-3.5S40 27 38 27zm-12-6c-2 0-3.5 1.5-3.5 3.5S24 28 26 28s3.5-1.5 3.5-3.5S28 21 26 21zm8 0c-2 0-3.5 1.5-3.5 3.5S32 28 34 28s3.5-1.5 3.5-3.5S36 21 34 21z' fill='%23f97316' fill-opacity='0.05'/%3E%3C/svg%3E");
+  }
+}
+
+@layer utilities {
+  /* Smooth image loading */
+  .img-loading {
+    @apply bg-muted animate-pulse rounded-2xl;
+  }
+
+  /* Fun gradient text - use sparingly! */
+  .text-gradient-orange {
+    background: linear-gradient(135deg, hsl(24 95% 50%) 0%, hsl(15 85% 55%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Soft shadows for playful feel */
+  .shadow-playful {
+    box-shadow:
+      0 4px 6px -1px hsl(24 95% 50% / 0.1),
+      0 10px 20px -5px hsl(var(--foreground) / 0.05);
+  }
+
+  .shadow-playful-lg {
+    box-shadow:
+      0 10px 25px -5px hsl(24 95% 50% / 0.15),
+      0 20px 40px -10px hsl(var(--foreground) / 0.1);
   }
 }
