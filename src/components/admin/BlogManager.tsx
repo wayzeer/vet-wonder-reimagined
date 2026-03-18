@@ -32,19 +32,8 @@ import {
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
-interface BlogPost {
-    id: string;
-    title: string;
-    slug: string;
-    excerpt: string | null;
-    content: string;
-    category: string;
-    featured_image_url: string | null;
-    published: boolean;
-    published_at: string | null;
-    created_at: string;
-}
+import { isValidImageUrl } from "@/lib/blog";
+import type { BlogPost } from "@/lib/blog";
 
 export const BlogManager = () => {
     const queryClient = useQueryClient();
@@ -278,7 +267,7 @@ export const BlogManager = () => {
                                     placeholder="https://..."
                                     className="mt-1"
                                 />
-                                {formData.featured_image && (
+                                {formData.featured_image && isValidImageUrl(formData.featured_image) && (
                                     <img
                                         src={formData.featured_image}
                                         alt="Preview"

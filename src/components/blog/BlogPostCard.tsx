@@ -4,16 +4,7 @@ import { Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Link } from "react-router-dom";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt?: string | null;
-  category?: string;
-  published_at?: string | null;
-  featured_image_url?: string | null;
-}
+import type { BlogPost } from "@/lib/blog";
 
 export function BlogPostCard({ post }: { post: BlogPost }) {
   const getCategoryColor = (category?: string) => {

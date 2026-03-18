@@ -67,8 +67,8 @@ class ApiClient {
         title: string;
         excerpt: string | null;
         category: string | null;
-        featured_image: string | null;
-        is_published: boolean;
+        featured_image_url: string | null;
+        published: boolean;
         published_at: string | null;
         created_at: string | null;
       }>;
@@ -84,8 +84,8 @@ class ApiClient {
       excerpt: string | null;
       content: string;
       category: string | null;
-      featured_image: string | null;
-      is_published: boolean;
+      featured_image_url: string | null;
+      published: boolean;
       published_at: string | null;
       created_at: string | null;
     }>(`/api/public/blog?slug=${encodeURIComponent(slug)}`);

@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import DOMPurify from "dompurify";
 import { Calendar, PawPrint } from "lucide-react";
+import { ensureHtml } from "@/lib/blog";
 
 interface NewsItem {
   id: string;
@@ -19,17 +20,6 @@ interface NewsItem {
   image_url: string | null;
   published_at: string;
   category: string | null;
-}
-
-/** Convert plain text to HTML paragraphs if content has no HTML tags */
-function ensureHtml(content: string): string {
-  if (/<(p|h[1-6]|ul|ol|li|div|blockquote|br)\b/i.test(content)) {
-    return content;
-  }
-  return content
-    .split(/\n{2,}/)
-    .map((block) => `<p>${block.replace(/\n/g, "<br>")}</p>`)
-    .join("");
 }
 
 export function NewsFeed() {

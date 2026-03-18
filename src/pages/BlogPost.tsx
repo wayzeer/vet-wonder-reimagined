@@ -8,35 +8,12 @@ import { Calendar, ArrowLeft, Phone, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
-
-interface BlogPostData {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  content: string;
-  category: string | null;
-  featured_image_url: string | null;
-  published_at: string | null;
-  created_at: string | null;
-}
-
-/** Convert plain text to HTML paragraphs if content has no HTML tags */
-function ensureHtml(content: string): string {
-  // If it already contains HTML block elements, return as-is
-  if (/<(p|h[1-6]|ul|ol|li|div|blockquote|br)\b/i.test(content)) {
-    return content;
-  }
-  // Plain text: split on double newlines for paragraphs, single newlines become <br>
-  return content
-    .split(/\n{2,}/)
-    .map((block) => `<p>${block.replace(/\n/g, "<br>")}</p>`)
-    .join("");
-}
+import { ensureHtml } from "@/lib/blog";
+import type { BlogPost } from "@/lib/blog";
 
 export default function BlogPost() {
   const { slug } = useParams();
-  const [post, setPost] = useState<BlogPostData | null>(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,20 +32,8 @@ export default function BlogPost() {
 
       if (error) throw error;
 
-      // Map DB column names to component interface
-      setPost(data ? {
-        id: data.id,
-        title: data.title,
-        slug: data.slug,
-        excerpt: data.excerpt,
-        content: data.content,
-        category: data.category || null,
-        featured_image_url: data.featured_image_url || null,
-        published_at: data.published_at,
-        created_at: data.created_at,
-      } : null);
-    } catch (error) {
-      console.error("Error cargando artículo:", error);
+      setPost(data as BlogPost | null);
+    } catch {
       setPost(null);
     } finally {
       setLoading(false);

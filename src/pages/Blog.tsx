@@ -6,17 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Loader2, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoVetWonder from "@/assets/logo-vetwonder.png";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  category: string | null;
-  featured_image_url: string | null;
-  published_at: string | null;
-  created_at: string | null;
-}
+import type { BlogPost } from "@/lib/blog";
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -47,8 +37,7 @@ export default function Blog() {
       if (error) throw error;
 
       setPosts((data || []) as BlogPost[]);
-    } catch (error) {
-      console.error("Error cargando blog:", error);
+    } catch {
       setPosts([]);
     } finally {
       setLoading(false);
