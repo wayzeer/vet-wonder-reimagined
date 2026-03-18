@@ -1,9 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const ALLOWED_ORIGINS = ['https://vetwonder.es', 'https://www.vetwonder.es'];
+
+function getCorsHeaders(req: Request) {
+    const origin = req.headers.get('origin') || '';
+    return {
+        'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    };
+}
 
 const systemPrompt = `Eres un veterinario experto y redactor de contenido para una clínica veterinaria llamada VetWonder en España.
 Tu tarea es crear artículos de blog informativos, precisos y atractivos sobre salud y cuidado animal.
@@ -27,7 +32,7 @@ Formato de respuesta obligatorio (JSON):
 
 serve(async (req) => {
     if (req.method === 'OPTIONS') {
-        return new Response(null, { headers: corsHeaders });
+        return new Response(null, { headers: getCorsHeaders(req) });
     }
 
     try {
@@ -38,7 +43,7 @@ serve(async (req) => {
                 error: 'El tema debe tener al menos 5 caracteres'
             }), {
                 status: 400,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
             });
         }
 
@@ -83,13 +88,13 @@ Responde SOLO con el JSON, sin texto adicional.`;
                     error: 'Límite de solicitudes alcanzado. Intenta en unos minutos.'
                 }), {
                     status: 429,
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                    headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
                 });
             }
 
             return new Response(JSON.stringify({ error: 'Error al generar contenido' }), {
                 status: 500,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
             });
         }
 
@@ -99,7 +104,7 @@ Responde SOLO con el JSON, sin texto adicional.`;
         if (!content) {
             return new Response(JSON.stringify({ error: 'No se generó contenido' }), {
                 status: 500,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
             });
         }
 
@@ -117,7 +122,7 @@ Responde SOLO con el JSON, sin texto adicional.`;
                 error: 'Error al procesar la respuesta de IA'
             }), {
                 status: 500,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
             });
         }
 
@@ -139,7 +144,7 @@ Responde SOLO con el JSON, sin texto adicional.`;
                 category,
             },
         }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
         });
     } catch (error) {
         console.error('Error en generate-blog-post:', error);
@@ -147,7 +152,7 @@ Responde SOLO con el JSON, sin texto adicional.`;
             error: error instanceof Error ? error.message : 'Error desconocido'
         }), {
             status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
         });
     }
 });

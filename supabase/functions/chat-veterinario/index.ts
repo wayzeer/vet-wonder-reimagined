@@ -1,9 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const ALLOWED_ORIGINS = ['https://vetwonder.es', 'https://www.vetwonder.es'];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 const systemPrompt = `Eres el Dogtor, el asistente virtual de las clinicas veterinarias VetWonder. Eres un perrito simpatico con gafas y bata de medico.
 
@@ -102,7 +107,7 @@ Recuerda: eres majo y cercano, pero siempre con sentido comun veterinario. Ante 
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -144,7 +149,7 @@ serve(async (req) => {
           error: 'Uff, demasiadas consultas seguidas. Espera un poco o llama al 918 57 43 79.'
         }), {
           status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
         });
       }
       if (response.status === 402) {
@@ -152,19 +157,19 @@ serve(async (req) => {
           error: 'El Dogtor esta descansando. Llama al 918 57 43 79 para lo que necesites.'
         }), {
           status: 402,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
         });
       }
       const errorText = await response.text();
       console.error('Error del gateway de IA:', response.status, errorText);
       return new Response(JSON.stringify({ error: 'Error al procesar tu consulta' }), {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
       });
     }
 
     return new Response(response.body, {
-      headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
+      headers: { ...getCorsHeaders(req),'Content-Type': 'text/event-stream' },
     });
   } catch (error) {
     console.error('Error en chat-veterinario:', error);
@@ -172,7 +177,7 @@ serve(async (req) => {
       error: error instanceof Error ? error.message : 'Error desconocido'
     }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
     });
   }
 });

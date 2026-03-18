@@ -7,10 +7,10 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.send-reminders]
-verify_jwt = false
+verify_jwt = true
 
 [functions.log-security-event]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-blog-post]
-verify_jwt = false
+verify_jwt = true

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api-client";
+import { supabase } from "@/integrations/supabase/client";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,8 @@ interface BlogPost {
   title: string;
   slug: string;
   excerpt: string | null;
-  content?: string;
   category: string | null;
   featured_image: string | null;
-  is_published: boolean;
   published_at: string | null;
   created_at: string | null;
 }
@@ -39,10 +37,27 @@ export default function Blog() {
 
   const loadPosts = async () => {
     try {
-      const { data, error } = await api.getPublicBlogPosts({ limit: 50 });
+      const { data, error } = await supabase
+        .from("blog_posts")
+        .select("id, title, slug, excerpt, category, featured_image_url, published, published_at, created_at")
+        .eq("published", true)
+        .order("published_at", { ascending: false })
+        .limit(50);
 
-      if (error) throw new Error(error);
-      setPosts(data?.data || []);
+      if (error) throw error;
+
+      // Map DB column names to component interface
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setPosts((data || []).map((post: any) => ({
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        category: post.category || null,
+        featured_image: post.featured_image || post.featured_image_url || null,
+        published_at: post.published_at,
+        created_at: post.created_at,
+      })));
     } catch (error) {
       console.error("Error cargando blog:", error);
       setPosts([]);

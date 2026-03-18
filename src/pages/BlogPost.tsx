@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { api } from "@/lib/api-client";
+import { supabase } from "@/integrations/supabase/client";
+import DOMPurify from "dompurify";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, ArrowLeft, Phone, Loader2 } from "lucide-react";
@@ -16,7 +17,6 @@ interface BlogPostData {
   content: string;
   category: string | null;
   featured_image: string | null;
-  is_published: boolean;
   published_at: string | null;
   created_at: string | null;
 }
@@ -33,10 +33,27 @@ export default function BlogPost() {
   const loadPost = async () => {
     if (!slug) return;
     try {
-      const { data, error } = await api.getPublicBlogPost(slug);
+      const { data, error } = await supabase
+        .from("blog_posts")
+        .select("id, title, slug, excerpt, content, category, featured_image_url, published, published_at, created_at")
+        .eq("slug", slug)
+        .eq("published", true)
+        .single();
 
-      if (error) throw new Error(error);
-      setPost(data || null);
+      if (error) throw error;
+
+      // Map DB column names to component interface
+      setPost(data ? {
+        id: data.id,
+        title: data.title,
+        slug: data.slug,
+        excerpt: data.excerpt,
+        content: data.content,
+        category: data.category || null,
+        featured_image: (data as any).featured_image || data.featured_image_url || null,
+        published_at: data.published_at,
+        created_at: data.created_at,
+      } : null);
     } catch (error) {
       console.error("Error cargando artículo:", error);
       setPost(null);
@@ -135,7 +152,7 @@ export default function BlogPost() {
 
           <div
             className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
           />
 
           <div className="mt-12 p-6 bg-primary/10 rounded-lg border border-primary/20">

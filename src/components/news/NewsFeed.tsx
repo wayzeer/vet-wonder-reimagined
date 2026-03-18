@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import DOMPurify from "dompurify";
 import { Calendar, PawPrint } from "lucide-react";
 
 interface NewsItem {
@@ -143,7 +144,7 @@ export function NewsFeed() {
               )}
               <div
                 className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: selectedItem.content }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedItem.content) }}
               />
             </>
           )}

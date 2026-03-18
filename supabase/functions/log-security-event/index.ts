@@ -1,9 +1,14 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const ALLOWED_ORIGINS = ['https://vetwonder.es', 'https://www.vetwonder.es'];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 // Simple hash function for IP anonymization
 async function hashIP(ip: string): Promise<string> {
@@ -17,7 +22,7 @@ async function hashIP(ip: string): Promise<string> {
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -27,7 +32,7 @@ Deno.serve(async (req) => {
     if (!eventType || !source) {
       // Return 200 silently - don't give bots any hints
       return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
         status: 200,
       });
     }
@@ -36,7 +41,7 @@ Deno.serve(async (req) => {
     const validEvents = ['honeypot_triggered', 'rate_limit_hit', 'suspicious_pattern', 'validation_failed'];
     if (!validEvents.includes(eventType)) {
       return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
         status: 200,
       });
     }
@@ -77,7 +82,7 @@ Deno.serve(async (req) => {
 
     // Always return success - don't reveal anything to potential attackers
     return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
       status: 200,
     });
 
@@ -86,7 +91,7 @@ Deno.serve(async (req) => {
     
     // Still return 200 - never reveal errors to potential attackers
     return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' },
       status: 200,
     });
   }

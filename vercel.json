@@ -20,6 +20,10 @@
                 {
                     "key": "X-XSS-Protection",
                     "value": "1; mode=block"
+                },
+                {
+                    "key": "Content-Security-Policy",
+                    "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.elfsight.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ai.gateway.lovable.dev; frame-src 'self' https://www.google.com https://www.youtube.com https://static.elfsight.com; media-src 'self' https:"
                 }
             ]
         }

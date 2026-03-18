@@ -6,6 +6,17 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 const VETSHELTER_API_URL = Deno.env.get("VETSHELTER_API_URL") || "https://vetsheltervetwonder.vercel.app";
 const VETSHELTER_API_KEY = Deno.env.get("VETSHELTER_API_KEY");
 
+const ALLOWED_ORIGINS = ['https://vetwonder.es', 'https://www.vetwonder.es'];
+
+function getCorsHeaders(req: Request) {
+    const origin = req.headers.get('origin') || '';
+    return {
+        'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    };
+}
+
 interface AppointmentPayload {
     name: string;
     email: string;
@@ -23,11 +34,7 @@ serve(async (req) => {
     if (req.method === "OPTIONS") {
         return new Response(null, {
             status: 204,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
+            headers: getCorsHeaders(req),
         });
     }
 
@@ -93,7 +100,7 @@ serve(async (req) => {
                 status: 201,
                 headers: {
                     "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
+                    ...getCorsHeaders(req),
                 }
             }
         );

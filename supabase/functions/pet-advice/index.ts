@@ -1,14 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const ALLOWED_ORIGINS = ['https://vetwonder.es', 'https://www.vetwonder.es'];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -54,7 +59,7 @@ serve(async (req) => {
           cached: true,
           daysUntilNext
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' } }
       );
     }
 
@@ -184,7 +189,7 @@ ${appointments && appointments.length > 0 ?
         cached: false,
         daysUntilNext: 7
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' } }
     );
 
   } catch (error: any) {
@@ -193,7 +198,7 @@ ${appointments && appointments.length > 0 ?
       JSON.stringify({ error: error.message || 'Error al generar consejos' }),
       { 
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...getCorsHeaders(req),'Content-Type': 'application/json' }
       }
     );
   }
