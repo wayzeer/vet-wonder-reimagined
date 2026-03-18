@@ -102,8 +102,8 @@ export const BlogManager = () => {
                     excerpt: formData.excerpt || null,
                     content: formData.content,
                     category: formData.category,
-                    featured_image: formData.featured_image || null,
-                    is_published: isPublish,
+                    featured_image_url: formData.featured_image || null,
+                    published: isPublish,
                     published_at: isPublish ? new Date().toISOString() : null,
                 })
                 .select()
@@ -136,8 +136,8 @@ export const BlogManager = () => {
                     excerpt: formData.excerpt || null,
                     content: formData.content,
                     category: formData.category,
-                    featured_image: formData.featured_image || null,
-                    is_published: isPublish,
+                    featured_image_url: formData.featured_image || null,
+                    published: isPublish,
                     published_at: isPublish && !editingPost.is_published
                         ? new Date().toISOString()
                         : editingPost.published_at,
