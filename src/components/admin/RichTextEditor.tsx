@@ -169,6 +169,7 @@ export const RichTextEditor = ({
                 heading: {
                     levels: [2, 3],
                 },
+                link: false,
             }),
             Highlight,
             Link.configure({

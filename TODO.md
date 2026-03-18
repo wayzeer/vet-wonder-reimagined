@@ -63,8 +63,8 @@ SELECT cron.schedule(
   '0 * * * *',  -- Cada hora en punto
   $$
   SELECT net.http_post(
-    url := 'https://REDACTED_PROJECT.supabase.co/functions/v1/send-reminders',
-    headers := '{"Authorization": "Bearer REDACTED_KEY"}'::jsonb
+    url := 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/send-reminders',
+    headers := '{"Authorization": "Bearer YOUR_SUPABASE_ANON_KEY"}'::jsonb
   );
   $$
 );

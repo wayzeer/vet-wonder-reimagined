@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { api } from "@/lib/api-client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 import { Calendar, PawPrint } from "lucide-react";
 
 interface NewsItem {
   id: string;
   title: string;
   excerpt: string;
+  content: string;
   image_url: string | null;
   published_at: string;
   category: string | null;
@@ -16,6 +23,7 @@ interface NewsItem {
 export function NewsFeed() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<NewsItem | null>(null);
 
   useEffect(() => {
     loadNews();
@@ -23,10 +31,15 @@ export function NewsFeed() {
 
   const loadNews = async () => {
     try {
-      const { data, error } = await api.getPublicNews({ limit: 3 });
+      const { data, error } = await supabase
+        .from("news")
+        .select("id, title, excerpt, content, image_url, published_at, category")
+        .eq("published", true)
+        .order("published_at", { ascending: false })
+        .limit(3);
 
-      if (error) throw new Error(error);
-      setNews(data?.data || []);
+      if (error) throw error;
+      setNews(data || []);
     } catch (error) {
       console.error('Error loading news:', error);
     } finally {
@@ -61,11 +74,11 @@ export function NewsFeed() {
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {news.map((item) => (
-        <Card key={item.id} className="hover:shadow-lg transition-all hover:-translate-y-1 overflow-hidden flex flex-col">
+        <Card key={item.id} className="hover:shadow-lg transition-all hover:-translate-y-1 overflow-hidden flex flex-col cursor-pointer" onClick={() => setSelectedItem(item)}>
           {item.image_url ? (
             <div className="h-48 overflow-hidden">
-            <img 
-              src={item.image_url} 
+            <img
+              src={item.image_url}
               alt={item.title}
               loading="lazy"
               className="w-full h-full object-cover"
@@ -86,9 +99,9 @@ export function NewsFeed() {
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
                 <span className="whitespace-nowrap">
-                  {new Date(item.published_at).toLocaleDateString('es-ES', { 
-                    day: 'numeric', 
-                    month: 'short' 
+                  {new Date(item.published_at).toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'short'
                   })}
                 </span>
               </div>
@@ -100,6 +113,42 @@ export function NewsFeed() {
           </CardHeader>
         </Card>
       ))}
+
+      <Dialog open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {selectedItem && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  {selectedItem.category && (
+                    <Badge variant="secondary">{selectedItem.category}</Badge>
+                  )}
+                  <span className="text-sm text-muted-foreground flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    {new Date(selectedItem.published_at).toLocaleDateString('es-ES', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </span>
+                </div>
+                <DialogTitle className="text-2xl">{selectedItem.title}</DialogTitle>
+              </DialogHeader>
+              {selectedItem.image_url && (
+                <img
+                  src={selectedItem.image_url}
+                  alt={selectedItem.title}
+                  className="w-full rounded-lg object-cover max-h-72"
+                />
+              )}
+              <div
+                className="prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: selectedItem.content }}
+              />
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

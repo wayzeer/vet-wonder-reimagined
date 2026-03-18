@@ -4,13 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
     Card,
     CardContent,
     CardDescription,
@@ -31,7 +24,6 @@ import { RichTextEditor } from "./RichTextEditor";
 import { toast } from "sonner";
 import {
     Loader2,
-    Wand2,
     Save,
     Send,
     Trash2,
@@ -56,29 +48,9 @@ interface BlogPost {
     created_at: string;
 }
 
-const CATEGORIES = [
-    { value: "Salud", label: "Salud" },
-    { value: "Nutrición", label: "Nutrición" },
-    { value: "Consejos", label: "Consejos" },
-    { value: "Noticias", label: "Noticias" },
-    { value: "Prevención", label: "Prevención" },
-];
-
-const WORD_COUNTS = [
-    { value: "500", label: "Corto (500 palabras)" },
-    { value: "800", label: "Medio (800 palabras)" },
-    { value: "1200", label: "Largo (1200 palabras)" },
-];
-
 export const BlogManager = () => {
     const queryClient = useQueryClient();
-    const [activeTab, setActiveTab] = useState("generator");
-
-    // Generator state
-    const [topic, setTopic] = useState("");
-    const [category, setCategory] = useState("Consejos");
-    const [wordCount, setWordCount] = useState("800");
-    const [isGenerating, setIsGenerating] = useState(false);
+    const [activeTab, setActiveTab] = useState("editor");
 
     // Form state
     const [formData, setFormData] = useState({
@@ -207,48 +179,6 @@ export const BlogManager = () => {
         },
     });
 
-    // Generate content with AI using Vercel API
-    const handleGenerate = async () => {
-        if (!topic.trim()) {
-            toast.error("Por favor, introduce un tema");
-            return;
-        }
-
-        setIsGenerating(true);
-        try {
-            const response = await fetch("/api/generate-blog-post", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    topic,
-                    category,
-                    wordCount: parseInt(wordCount),
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.success) {
-                throw new Error(data.error || "Error al generar contenido");
-            }
-
-            setFormData({
-                title: data.data.title,
-                slug: data.data.slug,
-                excerpt: data.data.excerpt,
-                content: data.data.content,
-                featured_image: "",
-                category: data.data.category,
-            });
-
-            toast.success("¡Contenido generado con IA!");
-        } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Error al generar contenido");
-        } finally {
-            setIsGenerating(false);
-        }
-    };
-
     const resetForm = () => {
         setFormData({
             title: "",
@@ -259,7 +189,6 @@ export const BlogManager = () => {
             category: "Consejos",
         });
         setEditingPost(null);
-        setTopic("");
     };
 
     const handleEdit = (post: BlogPost) => {
@@ -272,7 +201,7 @@ export const BlogManager = () => {
             featured_image: post.featured_image || "",
             category: post.category,
         });
-        setActiveTab("generator");
+        setActiveTab("editor");
     };
 
     const generateSlug = (title: string) => {
@@ -298,85 +227,13 @@ export const BlogManager = () => {
         <div className="space-y-6">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid w-full grid-cols-2 max-w-md">
-                    <TabsTrigger value="generator">Generar Post</TabsTrigger>
+                    <TabsTrigger value="editor">
+                        {editingPost ? "Editar Post" : "Nuevo Post"}
+                    </TabsTrigger>
                     <TabsTrigger value="posts">Mis Posts</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="generator" className="space-y-6">
-                    {/* AI Generator Card */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Wand2 className="h-5 w-5 text-primary" />
-                                Generador de Contenido con IA
-                            </CardTitle>
-                            <CardDescription>
-                                Introduce un tema y la IA creará el contenido para ti
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid gap-4 md:grid-cols-4">
-                                <div className="md:col-span-2">
-                                    <Label>Tema del artículo</Label>
-                                    <Textarea
-                                        placeholder="Ej: Vacunas esenciales para perros cachorros"
-                                        value={topic}
-                                        onChange={(e) => setTopic(e.target.value)}
-                                        className="mt-1"
-                                    />
-                                </div>
-                                <div>
-                                    <Label>Categoría</Label>
-                                    <Select value={category} onValueChange={setCategory}>
-                                        <SelectTrigger className="mt-1">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {CATEGORIES.map((cat) => (
-                                                <SelectItem key={cat.value} value={cat.value}>
-                                                    {cat.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Label>Extensión</Label>
-                                    <Select value={wordCount} onValueChange={setWordCount}>
-                                        <SelectTrigger className="mt-1">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {WORD_COUNTS.map((wc) => (
-                                                <SelectItem key={wc.value} value={wc.value}>
-                                                    {wc.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-                            <Button
-                                onClick={handleGenerate}
-                                disabled={isGenerating || !topic.trim()}
-                                className="w-full md:w-auto"
-                            >
-                                {isGenerating ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Generando...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Wand2 className="mr-2 h-4 w-4" />
-                                        Generar con IA
-                                    </>
-                                )}
-                            </Button>
-                        </CardContent>
-                    </Card>
-
-                    {/* Content Editor Card */}
+                <TabsContent value="editor" className="space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle>
@@ -453,7 +310,7 @@ export const BlogManager = () => {
                                         onChange={(content) =>
                                             setFormData({ ...formData, content })
                                         }
-                                        placeholder="Escribe o genera el contenido del artículo..."
+                                        placeholder="Escribe el contenido del artículo..."
                                     />
                                 </div>
                             </div>
@@ -554,7 +411,7 @@ export const BlogManager = () => {
                                 </Table>
                             ) : (
                                 <div className="text-center py-8 text-muted-foreground">
-                                    No hay posts todavía. ¡Genera uno con IA!
+                                    No hay posts todavía. ¡Crea uno nuevo!
                                 </div>
                             )}
                         </CardContent>
