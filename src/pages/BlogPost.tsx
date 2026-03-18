@@ -16,7 +16,7 @@ interface BlogPostData {
   excerpt: string | null;
   content: string;
   category: string | null;
-  featured_image: string | null;
+  featured_image_url: string | null;
   published_at: string | null;
   created_at: string | null;
 }
@@ -63,7 +63,7 @@ export default function BlogPost() {
         excerpt: data.excerpt,
         content: data.content,
         category: data.category || null,
-        featured_image: (data as any).featured_image || data.featured_image_url || null,
+        featured_image_url: data.featured_image_url || null,
         published_at: data.published_at,
         created_at: data.created_at,
       } : null);
@@ -135,9 +135,9 @@ export default function BlogPost() {
         </Link>
 
         <article className="max-w-4xl mx-auto">
-          {post.featured_image && (
+          {post.featured_image_url && (
             <img
-              src={post.featured_image}
+              src={post.featured_image_url}
               alt={post.title}
               className="w-full aspect-video object-cover rounded-lg mb-6"
             />

@@ -13,7 +13,7 @@ interface BlogPost {
   slug: string;
   excerpt: string | null;
   category: string | null;
-  featured_image: string | null;
+  featured_image_url: string | null;
   published_at: string | null;
   created_at: string | null;
 }
@@ -46,18 +46,7 @@ export default function Blog() {
 
       if (error) throw error;
 
-      // Map DB column names to component interface
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setPosts((data || []).map((post: any) => ({
-        id: post.id,
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        category: post.category || null,
-        featured_image: post.featured_image || post.featured_image_url || null,
-        published_at: post.published_at,
-        created_at: post.created_at,
-      })));
+      setPosts((data || []) as BlogPost[]);
     } catch (error) {
       console.error("Error cargando blog:", error);
       setPosts([]);

@@ -41,7 +41,7 @@ serve(async (req) => {
     if (req.method !== "POST") {
         return new Response(JSON.stringify({ error: "Method not allowed" }), {
             status: 405,
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...getCorsHeaders(req) },
         });
     }
 
@@ -50,7 +50,7 @@ serve(async (req) => {
             console.error("VETSHELTER_API_KEY not configured");
             return new Response(
                 JSON.stringify({ error: "Server configuration error" }),
-                { status: 500, headers: { "Content-Type": "application/json" } }
+                { status: 500, headers: { "Content-Type": "application/json", ...getCorsHeaders(req) } }
             );
         }
 
@@ -60,7 +60,7 @@ serve(async (req) => {
         if (!payload.name || !payload.email) {
             return new Response(
                 JSON.stringify({ error: "Name and email are required" }),
-                { status: 400, headers: { "Content-Type": "application/json" } }
+                { status: 400, headers: { "Content-Type": "application/json", ...getCorsHeaders(req) } }
             );
         }
 
@@ -85,7 +85,7 @@ serve(async (req) => {
                 }),
                 {
                     status: response.status,
-                    headers: { "Content-Type": "application/json" }
+                    headers: { "Content-Type": "application/json", ...getCorsHeaders(req) }
                 }
             );
         }
@@ -109,7 +109,7 @@ serve(async (req) => {
         console.error("Sync appointment error:", error);
         return new Response(
             JSON.stringify({ error: "Internal server error" }),
-            { status: 500, headers: { "Content-Type": "application/json" } }
+            { status: 500, headers: { "Content-Type": "application/json", ...getCorsHeaders(req) } }
         );
     }
 });

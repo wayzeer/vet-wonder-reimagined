@@ -40,10 +40,8 @@ interface BlogPost {
     excerpt: string | null;
     content: string;
     category: string;
-    featured_image: string | null;
-    featured_image_url?: string | null;
-    is_published: boolean;
-    published?: boolean;
+    featured_image_url: string | null;
+    published: boolean;
     published_at: string | null;
     created_at: string;
 }
@@ -74,20 +72,7 @@ export const BlogManager = () => {
 
             if (error) throw error;
 
-            // Map database columns to interface (handle both old and new schemas)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return (data || []).map((post: any) => ({
-                id: post.id,
-                title: post.title,
-                slug: post.slug,
-                excerpt: post.excerpt,
-                content: post.content,
-                category: post.category || "Consejos",
-                featured_image: post.featured_image || post.featured_image_url || null,
-                is_published: post.is_published ?? post.published ?? false,
-                published_at: post.published_at,
-                created_at: post.created_at,
-            })) as BlogPost[];
+            return (data || []) as BlogPost[];
         },
     });
 
@@ -138,7 +123,7 @@ export const BlogManager = () => {
                     category: formData.category,
                     featured_image_url: formData.featured_image || null,
                     published: isPublish,
-                    published_at: isPublish && !editingPost.is_published
+                    published_at: isPublish && !editingPost.published
                         ? new Date().toISOString()
                         : editingPost.published_at,
                 })
@@ -198,7 +183,7 @@ export const BlogManager = () => {
             slug: post.slug,
             excerpt: post.excerpt || "",
             content: post.content,
-            featured_image: post.featured_image || "",
+            featured_image: post.featured_image_url || "",
             category: post.category,
         });
         setActiveTab("editor");
@@ -377,9 +362,9 @@ export const BlogManager = () => {
                                                 </TableCell>
                                                 <TableCell>
                                                     <Badge
-                                                        variant={post.is_published ? "default" : "secondary"}
+                                                        variant={post.published ? "default" : "secondary"}
                                                     >
-                                                        {post.is_published ? "Publicado" : "Borrador"}
+                                                        {post.published ? "Publicado" : "Borrador"}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell>

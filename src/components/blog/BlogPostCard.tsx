@@ -12,7 +12,7 @@ interface BlogPost {
   excerpt?: string | null;
   category?: string;
   published_at?: string | null;
-  featured_image?: string | null;
+  featured_image_url?: string | null;
 }
 
 export function BlogPostCard({ post }: { post: BlogPost }) {
@@ -31,9 +31,9 @@ export function BlogPostCard({ post }: { post: BlogPost }) {
     <Link to={`/blog/${post.slug}`}>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
         <div className="aspect-video bg-muted relative">
-          {post.featured_image ? (
+          {post.featured_image_url ? (
             <img
-              src={post.featured_image}
+              src={post.featured_image_url}
               alt={post.title}
               loading="lazy"
               className="w-full h-full object-cover"
