@@ -21,6 +21,17 @@ interface NewsItem {
   category: string | null;
 }
 
+/** Convert plain text to HTML paragraphs if content has no HTML tags */
+function ensureHtml(content: string): string {
+  if (/<(p|h[1-6]|ul|ol|li|div|blockquote|br)\b/i.test(content)) {
+    return content;
+  }
+  return content
+    .split(/\n{2,}/)
+    .map((block) => `<p>${block.replace(/\n/g, "<br>")}</p>`)
+    .join("");
+}
+
 export function NewsFeed() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -143,8 +154,8 @@ export function NewsFeed() {
                 />
               )}
               <div
-                className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedItem.content) }}
+                className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-foreground/90 prose-a:text-primary prose-strong:text-foreground prose-blockquote:border-primary/50 prose-img:rounded-lg"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(ensureHtml(selectedItem.content)) }}
               />
             </>
           )}

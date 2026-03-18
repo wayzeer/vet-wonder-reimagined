@@ -21,6 +21,19 @@ interface BlogPostData {
   created_at: string | null;
 }
 
+/** Convert plain text to HTML paragraphs if content has no HTML tags */
+function ensureHtml(content: string): string {
+  // If it already contains HTML block elements, return as-is
+  if (/<(p|h[1-6]|ul|ol|li|div|blockquote|br)\b/i.test(content)) {
+    return content;
+  }
+  // Plain text: split on double newlines for paragraphs, single newlines become <br>
+  return content
+    .split(/\n{2,}/)
+    .map((block) => `<p>${block.replace(/\n/g, "<br>")}</p>`)
+    .join("");
+}
+
 export default function BlogPost() {
   const { slug } = useParams();
   const [post, setPost] = useState<BlogPostData | null>(null);
@@ -151,8 +164,8 @@ export default function BlogPost() {
           )}
 
           <div
-            className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+            className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground/90 prose-a:text-primary prose-strong:text-foreground prose-blockquote:border-primary/50 prose-img:rounded-lg"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(ensureHtml(post.content)) }}
           />
 
           <div className="mt-12 p-6 bg-primary/10 rounded-lg border border-primary/20">

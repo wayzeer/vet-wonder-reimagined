@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2, Plus, Edit, Trash2, Upload, X, ImageIcon } from "lucide-react";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface NewsItem {
   id: string;
@@ -274,15 +275,13 @@ export const NewsManager = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content">Contenido *</Label>
-              <Textarea
-                id="content"
-                required
-                value={formData.content}
-                onChange={(e) =>
-                  setFormData({ ...formData, content: e.target.value })
+              <Label>Contenido *</Label>
+              <RichTextEditor
+                content={formData.content}
+                onChange={(content) =>
+                  setFormData({ ...formData, content })
                 }
-                rows={8}
+                placeholder="Escribe el contenido de la noticia..."
               />
             </div>
 
